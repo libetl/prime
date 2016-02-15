@@ -70,7 +70,7 @@ public class Prime<T> {
 
     @SuppressWarnings ("unchecked")
     public static <T> List<T> list (final String request) {
-        return ((List<T>) ReadPrimeCommand.execute (request));
+        return ((List<T>) ReadPrimeCommand.execute (request + (request.endsWith (";") ? "" : ";")));
     }
 
     public static <T> Prime<T> select (final Class<T> clazz) {

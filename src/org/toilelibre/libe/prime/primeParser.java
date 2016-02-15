@@ -535,7 +535,7 @@ public class primeParser extends Parser {
             WHITESPACE = 25, BOOLEAN = 26;
 
     public static final String [] tokenNames = { "<INVALID>", "'select'", "'add'", "'with'", "'remove'", "'where'", "'lazyloading'", "'or'", "'and'", "'limit'", "'attribute'",
-            "'('", "')'", "'['", "']'", "'=='", "'='", "'~~'", "';'", "'''", "'\"'", "'.'", "'$'", "NUMBER", "WORD", "WHITESPACE", "BOOLEAN" };
+            "'('", "')'", "'['", "']'", "'=='", "'!='", "'~~'", "';'", "'''", "'\"'", "'.'", "'$'", "NUMBER", "WORD", "WHITESPACE", "BOOLEAN" };
 
     public static final int RULE_primerequest = 0, RULE_command = 1, RULE_commandbody = 2, RULE_query = 3, RULE_create = 4, RULE_remove = 5, RULE_wherecriterias = 6,
             RULE_lazyloading = 7, RULE_criterias = 8, RULE_criteria = 9, RULE_operator = 10, RULE_conjunction = 11, RULE_expression = 12, RULE_field = 13, RULE_method = 14,

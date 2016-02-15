@@ -56,7 +56,7 @@ RPAREN: ')';
 LBRACKET :  '[';
 RBRACKET :  ']';
 EQUALS:'==';
-DIFFERENT:'=';
+DIFFERENT:'!=';
 LIKE:'~~';
 SEMICOLON : ';';
 QUOTE : '\'';

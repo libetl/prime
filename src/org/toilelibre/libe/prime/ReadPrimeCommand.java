@@ -103,7 +103,7 @@ public class ReadPrimeCommand {
 
     private static Method getMethodIfApplicable (final String typeAsString) {
         try {
-            return Class.forName (typeAsString.substring (0, typeAsString.lastIndexOf ('.'))).getMethod (typeAsString.substring (typeAsString.lastIndexOf ('.') + 1));
+            return Class.forName (typeAsString.indexOf ('.') == -1 ? typeAsString : typeAsString.substring (0, typeAsString.lastIndexOf ('.'))).getMethod (typeAsString.substring (typeAsString.lastIndexOf ('.') + 1));
         } catch (NoSuchMethodException | SecurityException | ClassNotFoundException e) {
             return null;
         }
