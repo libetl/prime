@@ -1,20 +1,15 @@
 package org.toilelibre.libe.prime;
 
-
-
-
-
 public class PrimeWhere implements Cloneable {
 
-    private String conjunction;
-    private int openedParentheses;
-    private String expression;
-    private String operator;
-    private String value;
-    private int closedParentheses;
+    private final String conjunction;
+    private final int    openedParentheses;
+    private final String expression;
+    private final String operator;
+    private final String value;
+    private final int    closedParentheses;
 
-
-    public PrimeWhere (String conjunction, int openedParentheses, String expression, String operator, String value, int closedParentheses) {
+    public PrimeWhere (final String conjunction, final int openedParentheses, final String expression, final String operator, final String value, final int closedParentheses) {
         super ();
         this.conjunction = conjunction;
         this.openedParentheses = openedParentheses;
@@ -24,41 +19,33 @@ public class PrimeWhere implements Cloneable {
         this.closedParentheses = closedParentheses;
     }
 
-
     @Override
     protected Object clone () throws CloneNotSupportedException {
         return super.clone ();
     }
 
+    public int getClosedParentheses () {
+        return this.closedParentheses;
+    }
 
     public String getConjunction () {
-        return conjunction;
+        return this.conjunction;
     }
-
-
-    public int getOpenedParentheses () {
-        return openedParentheses;
-    }
-
 
     public String getExpression () {
-        return expression;
+        return this.expression;
     }
 
+    public int getOpenedParentheses () {
+        return this.openedParentheses;
+    }
 
     public String getOperator () {
-        return operator;
+        return this.operator;
     }
-
 
     public String getValue () {
-        return value;
+        return this.value;
     }
-
-
-    public int getClosedParentheses () {
-        return closedParentheses;
-    }
-
 
 }

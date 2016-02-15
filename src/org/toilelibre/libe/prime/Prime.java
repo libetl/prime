@@ -1,4 +1,5 @@
 package org.toilelibre.libe.prime;
+
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.UUID;
@@ -14,62 +15,24 @@ import javassist.NotFoundException;
 
 public class Prime<T> {
 
-    private StringBuilder request;
-    private StringBuilder where;
-
-    public Prime () {
-        this.request = new StringBuilder ();
-        this.where = new StringBuilder ();
-    }
-    
-    private Prime (Class<T> clazz) {
-        this();
-        request.append ("select " + clazz.getName () + " limit 10 where \"\";");
-    }
-
-    public Prime (Method m) {
-        this();
-        request.append ("select " + m.getDeclaringClass().getName() + "." + m.getName() + " limit 10 where \"\";");
-    }
-
-    public static <T> Prime<T> select (Class<T> clazz) {
-        return new Prime<T> (clazz);
-    }
-    
-    public static <T> Prime<T> select (Object o) {
-        Method m = MethodCallRecorder.popCurrentThreadRecordedCall ();
-        return new Prime<T> (m);
-    }
-    
-    @SuppressWarnings("unchecked")
-	public static <T> List<T> list (String request) {
-        return ((List<T>) ReadPrimeCommand.execute (request));        
-    }
-
     @SuppressWarnings ("unchecked")
-    public static <T> T $ (T templateObject) {
-        ReferenceRecorder.recordObject (templateObject);
-        return (T) $ (templateObject.getClass ());
-    }
-
-    @SuppressWarnings ("unchecked")
-    public static <T> T $ (Class<T> templateClass) {
+    public static <T> T $ (final Class<T> templateClass) {
 
         try {
-            
-            ClassPool pool = ClassPool.getDefault ();
+
+            final ClassPool pool = ClassPool.getDefault ();
 
             // Create the class.
-            String suffix = UUID.randomUUID ().toString ().replace ('-', '_');
-            CtClass subClass = pool.makeClass (templateClass.getName () + suffix);
+            final String suffix = UUID.randomUUID ().toString ().replace ('-', '_');
+            final CtClass subClass = pool.makeClass (templateClass.getName () + suffix);
             final CtClass superClass = pool.get (templateClass.getName ());
             subClass.setSuperclass (superClass);
             subClass.setModifiers (Modifier.PUBLIC);
 
-            String params = getCorrectSuperInvocation (superClass);
-            createEmptyConstructor (templateClass, suffix, subClass, params);
-            for (CtMethod method : superClass.getDeclaredMethods ()) {
-                setRecordBody (subClass, method);
+            final String params = Prime.getCorrectSuperInvocation (superClass);
+            Prime.createEmptyConstructor (templateClass, suffix, subClass, params);
+            for (final CtMethod method : superClass.getDeclaredMethods ()) {
+                Prime.setRecordBody (subClass, method);
             }
             return (T) subClass.toClass ().newInstance ();
         } catch (InstantiationException | IllegalAccessException | CannotCompileException | NotFoundException e) {
@@ -77,25 +40,50 @@ public class Prime<T> {
         }
     }
 
-    private static String getCorrectSuperInvocation (CtClass superClass) throws NotFoundException {
+    @SuppressWarnings ("unchecked")
+    public static <T> T $ (final T templateObject) {
+        ReferenceRecorder.recordObject (templateObject);
+        return (T) Prime.$ (templateObject.getClass ());
+    }
+
+    private static <T> void createEmptyConstructor (final Class<T> templateClass, final String suffix, final CtClass subClass, final String params) throws CannotCompileException {
+        final CtConstructor ctor = CtNewConstructor.make ("public " + templateClass.getSimpleName () + suffix + " () {super(" + params + ");}", subClass);
+        subClass.addConstructor (ctor);
+    }
+
+    private static String getCorrectSuperInvocation (final CtClass superClass) throws NotFoundException {
         CtConstructor candidate = null;
-        for (CtConstructor constructor : superClass.getConstructors ()) {
-            if (candidate == null || constructor.getParameterTypes ().length < candidate.getParameterTypes ().length) {
+        for (final CtConstructor constructor : superClass.getConstructors ()) {
+            if ( (candidate == null) || (constructor.getParameterTypes ().length < candidate.getParameterTypes ().length)) {
                 candidate = constructor;
             }
         }
-        StringBuilder sb = new StringBuilder ();
+        final StringBuilder sb = new StringBuilder ();
         for (int i = 0 ; i < candidate.getParameterTypes ().length ; i++) {
             sb.append (DefaultResponseBuilder.getDefaultResponseForType (candidate.getParameterTypes () [i]));
-            if (i + 1 < candidate.getParameterTypes ().length) {
+            if ( (i + 1) < candidate.getParameterTypes ().length) {
                 sb.append (",");
             }
         }
         return sb.toString ();
     }
 
-    private static void setRecordBody (CtClass subClass, CtMethod method) throws CannotCompileException, NotFoundException {
-        CtMethod subclassedMethod = new CtMethod (method, subClass, null);
+    @SuppressWarnings ("unchecked")
+    public static <T> List<T> list (final String request) {
+        return ((List<T>) ReadPrimeCommand.execute (request));
+    }
+
+    public static <T> Prime<T> select (final Class<T> clazz) {
+        return new Prime<T> (clazz);
+    }
+
+    public static <T> Prime<T> select (final Object o) {
+        final Method m = MethodCallRecorder.popCurrentThreadRecordedCall ();
+        return new Prime<T> (m);
+    }
+
+    private static void setRecordBody (final CtClass subClass, final CtMethod method) throws CannotCompileException, NotFoundException {
+        final CtMethod subclassedMethod = new CtMethod (method, subClass, null);
         String body = "{" + MethodCallRecorder.class.getName () + ".recordCall(\"" + method.getLongName () + "\");";
         body += "return " + DefaultResponseBuilder.getDefaultResponseForType (method.getReturnType ()) + ";";
         body += "}";
@@ -103,31 +91,45 @@ public class Prime<T> {
         subClass.addMethod (subclassedMethod);
     }
 
-    private static <T> void createEmptyConstructor (Class<T> templateClass, String suffix, CtClass subClass, String params) throws CannotCompileException {
-        final CtConstructor ctor = CtNewConstructor.make ("public " + templateClass.getSimpleName () + suffix + " () {super(" + params + ");}", subClass);
-        subClass.addConstructor (ctor);
+    private StringBuilder request;
+
+    private StringBuilder where;
+
+    public Prime () {
+        this.request = new StringBuilder ();
+        this.where = new StringBuilder ();
     }
-    
+
+    private Prime (final Class<T> clazz) {
+        this ();
+        this.request.append ("select " + clazz.getName () + " limit 10 where \"\";");
+    }
+
+    public Prime (final Method m) {
+        this ();
+        this.request.append ("select " + m.getDeclaringClass ().getName () + "." + m.getName () + " limit 10 where \"\";");
+    }
+
     // select(AClass.class).where($(AClass.class).isFoo()).and($(AClass.class).isBar())
     // select($(anObject).getThings()).where($(AClass.class).isFoo()).and($(AClass.class).isBar())
-    
-    public Prime<T> where (Matcher matcher) {
-        this.where.append (matcher.getValue ());
-        return this;
-    }
-    
-    public Prime<T> and (Matcher matcher) {
+
+    public Prime<T> and (final Matcher matcher) {
         this.where.append (" and " + matcher.getValue ());
-        return this;
-    }
-    
-    public Prime<T> or (Matcher matcher) {
-        this.where.append (" or " + matcher.getValue ());
         return this;
     }
 
     @SuppressWarnings ("unchecked")
     public List<T> list () {
-        return ((List<T>) ReadPrimeCommand.execute (this.request.toString ().replace ("where \"\"", "where \"" + this.where + "\"")));        
+        return ((List<T>) ReadPrimeCommand.execute (this.request.toString ().replace ("where \"\"", "where \"" + this.where + "\"")));
+    }
+
+    public Prime<T> or (final Matcher matcher) {
+        this.where.append (" or " + matcher.getValue ());
+        return this;
+    }
+
+    public Prime<T> where (final Matcher matcher) {
+        this.where.append (matcher.getValue ());
+        return this;
     }
 }

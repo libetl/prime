@@ -9,18 +9,19 @@ import java.util.Map;
 public class Database {
 
     private static Map<Class<?>, List<Object>> database = new HashMap<> ();
-    
-    public static void store (Object o) {
-        if (database.get (o.getClass ()) == null) {
-            database.put (o.getClass (), new ArrayList<Object> ());
+
+    @SuppressWarnings ("unchecked")
+    public static <T> List<T> listType (final Class<T> clazz) {
+        if (Database.database.get (clazz) == null) {
+            return Collections.emptyList ();
         }
-        database.get (o.getClass ()).add (o);
+        return (List<T>) Database.database.get (clazz);
     }
-    @SuppressWarnings("unchecked")
-	public static <T> List<T> listType (Class<T> clazz) {
-        if (database.get (clazz) == null) {
-        	return Collections.emptyList();
+
+    public static void store (final Object o) {
+        if (Database.database.get (o.getClass ()) == null) {
+            Database.database.put (o.getClass (), new ArrayList<Object> ());
         }
-        return (List<T>) database.get (clazz);
+        Database.database.get (o.getClass ()).add (o);
     }
 }
