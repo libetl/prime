@@ -1,6 +1,7 @@
 package org.toilelibre.libe.prime;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -29,20 +30,20 @@ public class ReadPrimeCommand {
 	}
 
 	private static List<Object> executeQuery(primeParser.QueryContext query) throws ClassNotFoundException {
-		String typeAsString = query.type().getText();
+		String typeAsString = query.returnedType().getText();
 		@SuppressWarnings("unchecked")
 		Class<Object> type = (Class<Object>) Class.forName(typeAsString);
 		
 		List<PrimeWhere> conditions = new ArrayList<PrimeWhere> ();
-		for (int i = 0 ; i < query.criterias().criteria().size() ; i++) {
-			primeParser.CriteriaContext criteria = query.criterias().criteria().get(i);
-			primeParser.ConjunctionContext conjunction = i > 0 ? query.criterias().conjunction(i - 1) : null;
+		for (int i = 0 ; i < query.wherecriterias().criterias().criteria().size() ; i++) {
+			primeParser.CriteriaContext criteria = query.wherecriterias().criterias().criteria().get(i);
+			primeParser.ConjunctionContext conjunction = i > 0 ? query.wherecriterias().criterias().conjunction(i - 1) : null;
 			conditions.add(new PrimeWhere (conjunction == null ? null : conjunction.getText (),
-			        (criteria.OPENCONDS() == null ? "" : criteria.OPENCONDS().getText()).length(), 
+			        (criteria.LPAREN() == null ? Collections.emptyList() : criteria.LPAREN()).size(), 
 					        criteria.expression().field()==null ? criteria.expression().method ().getText () : criteria.expression ().field ().getText (), 
 					                criteria.operator().getText (),
 					criteria.value().getText().replaceAll("^'", "").replaceAll("'$", ""),
-					(criteria.CLOSECONDS() == null ? "" : criteria.CLOSECONDS().getText()).length()));
+					(criteria.RPAREN() == null ? Collections.emptyList() : criteria.RPAREN()).size()));
 			
 		}
 		return executeQuery (type, conditions);

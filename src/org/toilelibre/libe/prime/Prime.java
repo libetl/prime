@@ -24,12 +24,12 @@ public class Prime<T> {
     
     private Prime (Class<T> clazz) {
         this();
-        request.append ("temp query bus " + clazz.getName () + " * * limit 10 where \"\" select id dump |;");
+        request.append ("select " + clazz.getName () + " limit 10 where \"\";");
     }
 
     public Prime (Method m) {
         this();
-        request.append ("temp query bus " + m.getDeclaringClass().getName() + "." + m.getName() + " * * limit 10 where \"\" select id dump |;");
+        request.append ("select " + m.getDeclaringClass().getName() + "." + m.getName() + " limit 10 where \"\";");
     }
 
     public static <T> Prime<T> select (Class<T> clazz) {
@@ -39,6 +39,11 @@ public class Prime<T> {
     public static <T> Prime<T> select (Object o) {
         Method m = MethodCallRecorder.popCurrentThreadRecordedCall ();
         return new Prime<T> (m);
+    }
+    
+    @SuppressWarnings("unchecked")
+	public static <T> List<T> list (String request) {
+        return ((List<T>) ReadPrimeCommand.execute (request));        
     }
 
     @SuppressWarnings ("unchecked")

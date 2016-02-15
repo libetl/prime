@@ -6,51 +6,71 @@ primerequest : (command)+ EOF;
 
 command : commandbody SEMICOLON;
 
-commandbody : query | create | print;
+commandbody : query | create | remove;
 
-query : 'temp' 'query' 'bus' type '* *' limit ('where' criterias)? select DUMP?;
+query : SELECT returnedType limit? wherecriterias? lazyloading?;
 
-create : 'add' 'bus' type name rev 'policy' policy 'vault' vault;
 
-print : 'print' 'bus' OBJID '* *' limit select DUMP?;
 
-select : 'select' selection;
-selection : 'from[' field '].to.' selection | 'name' | 'id' | WORD;
+create : ADD type WITH criterias;
 
-criterias : '\"'? (criteria conjunction)* criteria '\"'?;
-criteria : OPENCONDS? expression operator value CLOSECONDS?;
+remove : REMOVE type ?;
 
-operator : '==' | '!=' | '~~';
-conjunction: 'or' | 'and';
-expression : ('attribute' LBRACKET QUOTE? field QUOTE? RBRACKET) | method '(' ')';
+wherecriterias: WHERE criterias;
+lazyloading : LAZYLOADING BOOLEAN;
 
-field : WORD+;
+criterias : DQUOTE? (criteria conjunction)* criteria DQUOTE?;
+criteria : LPAREN* expression operator value RPAREN*?;
+
+operator : EQUALS | DIFFERENT | LIKE;
+
+conjunction: OR | AND;
+
+expression : (ATTRIBUTE LBRACKET QUOTE? field QUOTE? RBRACKET) | method LPAREN RPAREN;
+
+field : WORD;
 method : WORD;
 
-limit : 'limit' NUMBER;
+limit : LIMIT NUMBER;
 
-type : (WORD('.'|'$')?)+;
-name : WORD;
-rev : WORD;
-policy : WORD;
-vault: WORD;
+returnedType : type | methodReturnType;
+methodReturnType : objectPath;
+type : WORD;
+objectPath:(WORD(DOT|DOLLAR)?)+;
 
-value : QUOTE? (WORD | OBJID | NUMBER) QUOTE? ;
+value : QUOTE? (WORD | NUMBER) QUOTE? ;
 
-OBJID :  [0-9]+'.'[0-9]+'.'[0-9]+'.'[0-9]+;
-NUMBER : [0-9]+;
+//keywords
+SELECT:'select';
+ADD:'add';
+WITH:'with';
+REMOVE:'remove';
+WHERE:'where';
+LAZYLOADING:'lazyloading';
+OR:'or';
+AND:'and';
+LIMIT:'limit';
+ATTRIBUTE:'attribute';
 
-DUMP : 'dump |';
-OPENCONDS: ('(')+;
-CLOSECONDS: (')')+;
-
-WORD: [a-zA-Z][a-zA-Z0-9]*;
-
+//syntax
+LPAREN: '(';
+RPAREN: ')';
+LBRACKET :  '[';
+RBRACKET :  ']';
+EQUALS:'==';
+DIFFERENT:'=';
+LIKE:'~~';
 SEMICOLON : ';';
 QUOTE : '\'';
+DQUOTE : '\"';
+DOT:'.';
+DOLLAR:'$';
+
+NUMBER : [0-9]+;
+WORD: [a-zA-Z][a-zA-Z0-9]*;
 
 WHITESPACE : [ \t\r\n]+ -> skip ;
 
-LBRACKET :  '[';
-RBRACKET :  ']';
+BOOLEAN : 'true' | 'false';
+
         
