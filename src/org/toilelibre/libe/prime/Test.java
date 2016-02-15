@@ -1,7 +1,7 @@
 package org.toilelibre.libe.prime;
 
-import static org.toilelibre.libe.prime.ClassSelector.$;
-import static org.toilelibre.libe.prime.ClassSelector.select;
+import static org.toilelibre.libe.prime.Prime.$;
+import static org.toilelibre.libe.prime.Prime.select;
 import static org.toilelibre.libe.prime.Matcher.eq;
 
 import java.util.Arrays;

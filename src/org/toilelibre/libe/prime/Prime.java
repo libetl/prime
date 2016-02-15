@@ -12,33 +12,33 @@ import javassist.CtNewConstructor;
 import javassist.Modifier;
 import javassist.NotFoundException;
 
-public class ClassSelector<T> {
+public class Prime<T> {
 
     private StringBuilder request;
     private StringBuilder where;
 
-    public ClassSelector () {
+    public Prime () {
         this.request = new StringBuilder ();
         this.where = new StringBuilder ();
     }
     
-    private ClassSelector (Class<T> clazz) {
+    private Prime (Class<T> clazz) {
         this();
         request.append ("temp query bus " + clazz.getName () + " * * limit 10 where \"\" select id dump |;");
     }
 
-    public ClassSelector (Method m) {
+    public Prime (Method m) {
         this();
         request.append ("temp query bus " + m.getDeclaringClass().getName() + "." + m.getName() + " * * limit 10 where \"\" select id dump |;");
     }
 
-    public static <T> ClassSelector<T> select (Class<T> clazz) {
-        return new ClassSelector<T> (clazz);
+    public static <T> Prime<T> select (Class<T> clazz) {
+        return new Prime<T> (clazz);
     }
     
-    public static <T> ClassSelector<T> select (Object o) {
+    public static <T> Prime<T> select (Object o) {
         Method m = MethodCallRecorder.popCurrentThreadRecordedCall ();
-        return new ClassSelector<T> (m);
+        return new Prime<T> (m);
     }
 
     @SuppressWarnings ("unchecked")
@@ -106,17 +106,17 @@ public class ClassSelector<T> {
     // select(AClass.class).where($(AClass.class).isFoo()).and($(AClass.class).isBar())
     // select($(anObject).getThings()).where($(AClass.class).isFoo()).and($(AClass.class).isBar())
     
-    public ClassSelector<T> where (Matcher matcher) {
+    public Prime<T> where (Matcher matcher) {
         this.where.append (matcher.getValue ());
         return this;
     }
     
-    public ClassSelector<T> and (Matcher matcher) {
+    public Prime<T> and (Matcher matcher) {
         this.where.append (" and " + matcher.getValue ());
         return this;
     }
     
-    public ClassSelector<T> or (Matcher matcher) {
+    public Prime<T> or (Matcher matcher) {
         this.where.append (" or " + matcher.getValue ());
         return this;
     }
