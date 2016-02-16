@@ -2,6 +2,7 @@
  * Define a grammar called prime
  */
 grammar prime;
+@header {package org.toilelibre.libe.prime;}
 primerequest : (command)+ EOF;
 
 command : commandbody SEMICOLON;
@@ -11,7 +12,7 @@ commandbody : query | create | remove;
 query : SELECT returnedType limit? wherecriterias? lazyloading?;
 
 create : ADD type WITH criterias;
-
+ 
 remove : REMOVE type ?;
 
 wherecriterias: WHERE criterias;

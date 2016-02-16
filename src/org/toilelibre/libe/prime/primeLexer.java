@@ -1,5 +1,5 @@
-package org.toilelibre.libe.prime;
 // Generated from prime.g4 by ANTLR 4.4
+package org.toilelibre.libe.prime;
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.Token;
