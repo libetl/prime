@@ -15,13 +15,13 @@ class PrimeWhereMatcher {
 
             @Override
             public boolean test (final PrimeWhere condition, final Object candidateDbo) {
-                return ("" + this.getCandidateValue (condition, candidateDbo)).matches (".*" + condition.getValue () + ".*");
+                return ! ("" + this.getCandidateValue (condition, candidateDbo)).equals (condition.getValue ());
             }
         }), LIKE ("~~", new Tester () {
 
             @Override
             public boolean test (final PrimeWhere condition, final Object candidateDbo) {
-                return ! ("" + this.getCandidateValue (condition, candidateDbo)).equals (condition.getValue ());
+                return ("" + this.getCandidateValue (condition, candidateDbo)).matches (".*" + condition.getValue () + ".*");
             }
         });
 
@@ -49,14 +49,14 @@ class PrimeWhereMatcher {
     }
 
     static abstract class Tester {
-        private static final String ATTRIBUTE = "attribute\\[[^\\]]+\\]";
+        private static final String ATTRIBUTE = "attribute\\[([^\\]]+)\\]";
 
         public Object getCandidateValue (final PrimeWhere condition, final Object candidateDbo) {
 
             try {
                 if (condition.getExpression ().matches (Tester.ATTRIBUTE)) {
-                    final String fieldAsString = condition.getExpression ().replaceAll (Tester.ATTRIBUTE, "");
-                    final Field field = candidateDbo.getClass ().getField (fieldAsString);
+                    final String fieldAsString = condition.getExpression ().replaceAll (Tester.ATTRIBUTE, "$1");
+                    final Field field = candidateDbo.getClass ().getDeclaredField (fieldAsString);
                     field.setAccessible (true);
                     return field.get (candidateDbo);
                 }

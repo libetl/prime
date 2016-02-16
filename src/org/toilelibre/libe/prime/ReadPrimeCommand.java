@@ -72,8 +72,7 @@ public class ReadPrimeCommand {
             final primeParser.ConjunctionContext conjunction = i > 0 ? query.wherecriterias ().criterias ().conjunction (i - 1) : null;
             conditions
                     .add (new PrimeWhere (conjunction == null ? null : conjunction.getText (), (criteria.LPAREN () == null ? Collections.emptyList () : criteria.LPAREN ()).size (),
-                            criteria.expression ().field () == null ? criteria.expression ().method ().getText () : criteria.expression ().field ().getText (),
-                            criteria.operator ().getText (), criteria.value ().getText ().replaceAll ("^'", "").replaceAll ("'$", ""),
+                             criteria.expression ().getText (), criteria.operator ().getText (), criteria.value ().getText ().replaceAll ("^'", "").replaceAll ("'$", ""),
                             (criteria.RPAREN () == null ? Collections.emptyList () : criteria.RPAREN ()).size ()));
 
         }
