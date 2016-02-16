@@ -17,7 +17,7 @@ public class Prime<T> {
 
     @SuppressWarnings ("unchecked")
     public static <T> List<T> list (final String request) {
-        return ((List<T>) PrimeCommandReader.execute (request + (request.endsWith (";") ? "" : ";")));
+        return ((List<T>) PrimeCommandReader.execute (request));
     }
 
     public static <T> Prime<T> select (final Class<T> clazz) {
