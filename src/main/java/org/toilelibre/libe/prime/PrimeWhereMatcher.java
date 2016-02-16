@@ -2,6 +2,7 @@ package org.toilelibre.libe.prime;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 class PrimeWhereMatcher {
 
@@ -55,16 +56,27 @@ class PrimeWhereMatcher {
 
             try {
                 if (condition.getExpression ().matches (Tester.ATTRIBUTE)) {
-                    final String fieldAsString = condition.getExpression ().replaceAll (Tester.ATTRIBUTE, "$1");
-                    final Field field = candidateDbo.getClass ().getDeclaredField (fieldAsString);
-                    field.setAccessible (true);
-                    return field.get (candidateDbo);
+                    return this.returnFieldValue(condition, candidateDbo);
                 }
-                return candidateDbo.getClass ().getMethod (condition.getExpression ()).invoke (candidateDbo);
+                return this.returnMethodResult(condition, candidateDbo);
             } catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
                 return null;
             }
         }
+
+		private Object returnMethodResult(final PrimeWhere condition, final Object candidateDbo) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+			Method m =  candidateDbo.getClass ().getMethod (
+					condition.getExpression().indexO f('(') != -1 ? condition.getExpression ().substring (0, condition.getExpression ().indexOf ('(')) : condition.getExpression ());
+			m.setAccessible(true);
+			return m.invoke (candidateDbo);
+		}
+
+		private Object returnFieldValue(final PrimeWhere condition, final Object candidateDbo) throws NoSuchFieldException, IllegalAccessException {
+			final String fieldAsString = condition.getExpression ().replaceAll (Tester.ATTRIBUTE, "$1");
+			final Field field = candidateDbo.getClass ().getDeclaredField (fieldAsString);
+			field.setAccessible (true);
+			return field.get (candidateDbo);
+		}
 
         abstract boolean test (PrimeWhere condition, Object candidateDbo);
     }

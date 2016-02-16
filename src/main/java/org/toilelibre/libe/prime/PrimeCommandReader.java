@@ -125,6 +125,7 @@ class PrimeCommandReader {
     @SuppressWarnings ("unchecked")
     private static <T> Collection<T> getTargetCollection (final Object container, final Method method) {
         try {
+        	method.setAccessible(true);
             final Object o = method.invoke (container);
             if (o instanceof Map) {
                 return (Collection<T>) ((Map<?, ?>) o).values ();
