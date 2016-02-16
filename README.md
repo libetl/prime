@@ -26,7 +26,7 @@ PRIME stands for 'Pojo Raw In Memory Engine'
       //Get any A instance in the database where b = 2 and c = 1
       select (A.class).where (eq (vA.getB (), 2)).and (eq (vA.getC (), 1)).list ();
   
-      //Get any D instance inside A.getD () where e = 2
+      //Get any D instance inside the a.getD () result where e = 2
       select ($(a).getD ()).where (eq (vD.getE (), 2)).list ();
 
       //this also works, but hides the usage in your IDE. Can be useful for external queries.
