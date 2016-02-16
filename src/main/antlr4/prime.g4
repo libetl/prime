@@ -2,7 +2,6 @@
  * Define a grammar called prime
  */
 grammar prime;
-@header {package org.toilelibre.libe.prime;}
 primerequest : (command)+ EOF;
 
 command : commandbody SEMICOLON;

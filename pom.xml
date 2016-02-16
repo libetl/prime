@@ -35,10 +35,16 @@
 						</goals>
 						<configuration>
 							<outputDirectory>
-								${project.build.directory}/generated-sources/antlr4/org/toilelibre/libe/prime
+								${project.build.directory}/generated-sources/antlr4/
 							</outputDirectory>
 							<listener>false</listener>
 							<visitor>false</visitor>
+							<arguments>
+								<argument>-package</argument>
+								<argument>org.toilelibre.libe.prime</argument>
+								<argument>-o</argument>
+								<argument>${project.build.directory}/generated-sources/antlr4/org/toilelibre/libe/prime</argument>
+							</arguments>
 						</configuration>
 					</execution>
 				</executions>
