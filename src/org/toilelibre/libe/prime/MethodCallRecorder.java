@@ -2,7 +2,7 @@ package org.toilelibre.libe.prime;
 
 import java.lang.reflect.Method;
 
-public class MethodCallRecorder {
+class MethodCallRecorder {
     private static ThreadLocal<Method> lastMethod = new ThreadLocal<Method> ();
 
     private static Class<?> getClass (final String className) throws ClassNotFoundException {
@@ -22,7 +22,7 @@ public class MethodCallRecorder {
         return result;
     }
 
-    public static void recordCall (final String signature) {
+    static void recordCall (final String signature) {
         final String argsAsString = signature.substring (signature.indexOf ('(') + 1, signature.lastIndexOf (')'));
         final String classNameAndMethod = signature.substring (0, signature.indexOf ('('));
         final String className = classNameAndMethod.substring (0, classNameAndMethod.lastIndexOf ('.'));

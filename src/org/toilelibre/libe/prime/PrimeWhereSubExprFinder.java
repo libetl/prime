@@ -9,15 +9,18 @@ import java.util.TreeMap;
 
 /**
  * Converts a list of conditions into a tree of nested subconditions map This
- * structure can be more easily resolved than a flat list Example : [ dbwc1 and
- * dbwc2 or (dbwc3 and (dbwc4 or dbwc5)) and dbwc6 ] => dbwc1 and dbwc2 or
- * \____________________________________ and dbwc6 | \_ dbwc3 and \ | \_ dbwc4
- * or dbwc5
- *
- * @author LBU1
+ * structure can be more easily resolved than a flat list 
+ * Example : [ dbwc1 and dbwc2 or (dbwc3 and (dbwc4 or dbwc5)) and dbwc6 ] 
+ *          => dbwc1 and dbwc2 or \____________________________________ and dbwc6
+ *                                | 
+ *                                \_ dbwc3 and 
+ *                                             \ 
+ *                                             | 
+ *                                             \_ dbwc4 or dbwc5
+
  *
  */
-public class PrimeWhereSubExprFinder {
+class PrimeWhereSubExprFinder {
 
     static class SubExpression implements Cloneable {
         private final int              start;

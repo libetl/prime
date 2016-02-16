@@ -1,7 +1,11 @@
-package org.toilelibre.libe.prime;
+package org.toilelibre.libe.prime.test;
 
 import java.util.Arrays;
 import java.util.List;
+
+import org.toilelibre.libe.prime.Database;
+import org.toilelibre.libe.prime.Matcher;
+import org.toilelibre.libe.prime.Prime;
 
 public class Test {
 

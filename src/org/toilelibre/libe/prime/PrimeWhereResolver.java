@@ -13,10 +13,9 @@ import java.util.Map.Entry;
  * DBWhereConditionDBWhereConditionSubExpressionsFindersFinder.findSubConditions
  * (listOfDbWhereConditions), candidate, context).get(0).get(0));
  *
- * @author LBU1
  *
  */
-public class PrimeWhereResolver {
+class PrimeWhereResolver {
 
     /**
      * Evaluates a subExpression filled of dummy DBWhereConditions (true or

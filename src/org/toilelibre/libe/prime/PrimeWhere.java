@@ -1,6 +1,6 @@
 package org.toilelibre.libe.prime;
 
-public class PrimeWhere implements Cloneable {
+class PrimeWhere implements Cloneable {
 
     private final String conjunction;
     private final int    openedParentheses;

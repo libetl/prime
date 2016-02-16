@@ -70,7 +70,7 @@ public class Prime<T> {
 
     @SuppressWarnings ("unchecked")
     public static <T> List<T> list (final String request) {
-        return ((List<T>) ReadPrimeCommand.execute (request + (request.endsWith (";") ? "" : ";")));
+        return ((List<T>) PrimeCommandReader.execute (request + (request.endsWith (";") ? "" : ";")));
     }
 
     public static <T> Prime<T> select (final Class<T> clazz) {
@@ -95,7 +95,7 @@ public class Prime<T> {
 
     private StringBuilder where;
 
-    public Prime () {
+    private Prime () {
         this.request = new StringBuilder ();
         this.where = new StringBuilder ();
     }
@@ -105,7 +105,7 @@ public class Prime<T> {
         this.request.append ("select " + clazz.getName () + " limit 10 where \"\";");
     }
 
-    public Prime (final Method m) {
+    private Prime (final Method m) {
         this ();
         this.request.append ("select " + m.getDeclaringClass ().getName () + "." + m.getName () + " limit 10 where \"\";");
     }
@@ -120,7 +120,7 @@ public class Prime<T> {
 
     @SuppressWarnings ("unchecked")
     public List<T> list () {
-        return ((List<T>) ReadPrimeCommand.execute (this.request.toString ().replace ("where \"\"", "where \"" + this.where + "\"")));
+        return ((List<T>) PrimeCommandReader.execute (this.request.toString ().replace ("where \"\"", "where \"" + this.where + "\"")));
     }
 
     public Prime<T> or (final Matcher matcher) {

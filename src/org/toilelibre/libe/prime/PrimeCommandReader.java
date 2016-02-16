@@ -16,7 +16,7 @@ import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.toilelibre.libe.prime.PrimeWhereSubExprFinder.SubExpression;
 
-public class ReadPrimeCommand {
+class PrimeCommandReader {
     private static Map<Integer, List<SubExpression>> cloneSubExprs (final Map<Integer, List<SubExpression>> subExprsMap) {
         final Map<Integer, List<SubExpression>> result = new HashMap<Integer, List<SubExpression>> ();
         for (final Entry<Integer, List<SubExpression>> entry : subExprsMap.entrySet ()) {
@@ -34,36 +34,36 @@ public class ReadPrimeCommand {
         for (final primeParser.CommandContext command : parser.primerequest ().command ()) {
             final primeParser.CommandbodyContext commandBody = command.commandbody ();
             if (!commandBody.query ().isEmpty ()) {
-                return ReadPrimeCommand.executeQuery (commandBody.query ());
+                return PrimeCommandReader.executeQuery (commandBody.query ());
             }
         }
         return null;
     }
 
     private static <T> List<T> executeDatabaseQuery (final Class<T> type, final List<PrimeWhere> conditions) {
-        return ReadPrimeCommand.launchQuery (type, conditions, null, null);
+        return PrimeCommandReader.launchQuery (type, conditions, null, null);
     }
 
     private static <T> List<T> executeObjectQuery (final Object container, final Method method, final Class<T> type, final List<PrimeWhere> conditions) {
-        return ReadPrimeCommand.launchQuery (type, conditions, container, method);
+        return PrimeCommandReader.launchQuery (type, conditions, container, method);
     }
 
     private static <T> List<T> executeQuery (final Class<T> type, final Method methodIfExists, final List<PrimeWhere> conditions) {
         final Object container = ReferenceRecorder.popCurrentThreadRecordedObject ();
         if (container == null) {
-            return ReadPrimeCommand.executeDatabaseQuery (type, conditions);
+            return PrimeCommandReader.executeDatabaseQuery (type, conditions);
         }
-        return ReadPrimeCommand.executeObjectQuery (container, methodIfExists, type, conditions);
+        return PrimeCommandReader.executeObjectQuery (container, methodIfExists, type, conditions);
     }
 
     private static <T> List<T> executeQuery (final primeParser.QueryContext query) {
         final String typeAsString = query.returnedType ().getText ();
-        final Method method = ReadPrimeCommand.getMethodIfApplicable (typeAsString);
+        final Method method = PrimeCommandReader.getMethodIfApplicable (typeAsString);
         Class<T> returnType = null;
         if (method != null) {
-            returnType = ReadPrimeCommand.getParameterizedReturnType (method);
+            returnType = PrimeCommandReader.getParameterizedReturnType (method);
         } else {
-            returnType = ReadPrimeCommand.getCorrectReturnType (typeAsString);
+            returnType = PrimeCommandReader.getCorrectReturnType (typeAsString);
         }
 
         final List<PrimeWhere> conditions = new ArrayList<PrimeWhere> ();
@@ -76,7 +76,7 @@ public class ReadPrimeCommand {
                             (criteria.RPAREN () == null ? Collections.emptyList () : criteria.RPAREN ()).size ()));
 
         }
-        return ReadPrimeCommand.executeQuery (returnType, method, conditions);
+        return PrimeCommandReader.executeQuery (returnType, method, conditions);
     }
 
     @SuppressWarnings ("unchecked")
@@ -113,7 +113,7 @@ public class ReadPrimeCommand {
         try {
             final Type type = m.getGenericReturnType ();
             if (type != null) {
-                return ReadPrimeCommand.findReturnTypeForParameterizedType ((ParameterizedType) type);
+                return PrimeCommandReader.findReturnTypeForParameterizedType ((ParameterizedType) type);
             }
             return null;
         } catch (final SecurityException e) {
@@ -138,11 +138,11 @@ public class ReadPrimeCommand {
     private static <T> List<T> launchQuery (final Class<T> type, final List<PrimeWhere> conditions, final Object container, final Method method) {
         final Map<Integer, List<SubExpression>> subExprsModel = PrimeWhereSubExprFinder.findSubConditions (conditions);
         @SuppressWarnings ("unchecked")
-        final Collection<T> collection = (Collection<T>) ( (container != null) && (method != null) ? ReadPrimeCommand.getTargetCollection (container, method)
+        final Collection<T> collection = (Collection<T>) ( (container != null) && (method != null) ? PrimeCommandReader.getTargetCollection (container, method)
                 : Database.listType (type));
         final List<T> result = new ArrayList<T> ();
         for (final T element : collection) {
-            final Map<Integer, List<SubExpression>> subExprs = ReadPrimeCommand.cloneSubExprs (subExprsModel);
+            final Map<Integer, List<SubExpression>> subExprs = PrimeCommandReader.cloneSubExprs (subExprsModel);
             if (PrimeWhereResolver.findTruth (PrimeWhereResolver.resolve (subExprs, element).get (0).get (0))) {
                 result.add (element);
             }
