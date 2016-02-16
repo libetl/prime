@@ -6,13 +6,14 @@ PRIME stands for 'Pojo Raw In Memory Engine'
 ```java
   package mypackage.test;
   //...
+  import mypackage.A;
+  import mypackage.D;
+  import org.toilelibre.libe.prime.Database;
+  //...
   import static org.toilelibre.libe.prime.Prime.select;
   import static org.toilelibre.libe.prime.Prime.$;
   import static org.toilelibre.libe.prime.Prime.list;
   import static org.toilelibre.libe.prime.Matcher.eq;
-  //...
-  import mypackage.A;
-  import mypackage.D;
   //...
   public class MyClass {
     //...
