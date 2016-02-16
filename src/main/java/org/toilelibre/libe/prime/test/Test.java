@@ -55,9 +55,12 @@ public class Test {
         final List<A> listOfA = Prime.select (A.class).where (Matcher.eq (Prime.$ (A.class).getB (), 2)).and (Matcher.eq (Prime.$ (A.class).getC (), 1)).list ();
         final List<D> listOfD = Prime.<D> select (Prime.$ (a).getD ()).where (Matcher.eq (Prime.$ (D.class).getE (), 2)).list ();
         final List<A> someA = Prime.<A>list ("select " + A.class.getName () + " where attribute[c] != 3");
+        Database.remove (a);
+        final List<A> listOfAEmpty = Prime.select (A.class).where (Matcher.eq (Prime.$ (A.class).getB (), 2)).and (Matcher.eq (Prime.$ (A.class).getC (), 1)).list ();
         listOfA.hashCode ();
         listOfD.hashCode ();
         someA.hashCode ();
-    }
+        listOfAEmpty.hashCode ();
+}
 
 }

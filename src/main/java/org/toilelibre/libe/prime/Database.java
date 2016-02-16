@@ -24,4 +24,11 @@ public class Database {
         }
         Database.database.get (o.getClass ()).add (o);
     }
+
+    public static boolean remove (final Object o) {
+        if (Database.database.get (o.getClass ()) == null) {
+            Database.database.put (o.getClass (), new ArrayList<Object> ());
+        }
+        return Database.database.get (o.getClass ()).remove (o);
+    }
 }
