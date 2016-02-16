@@ -31,7 +31,7 @@ PRIME stands for 'Pojo Raw In Memory Engine'
       //Get any D instance inside the a.getD () result where e = 2
       select ($(a).getD ()).where (eq (vD.getE (), 2)).list ();
 
-      //this also works with plain text requests, but hides the usage in your IDE.
+      //This also works with plain text requests, but hides the usage in your IDE.
       //Can be useful for external queries.
       list ("select mypackage.D where attribute[c] != 3");
     }
