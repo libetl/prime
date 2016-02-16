@@ -2,7 +2,7 @@ package org.toilelibre.libe.prime;
 
 import java.lang.reflect.Method;
 
-public class MethodCallRecorder {
+class MethodCallRecorder {
     private static ThreadLocal<Method> lastMethod = new ThreadLocal<Method> ();
 
     private static Class<?> getClass (final String className) throws ClassNotFoundException {
