@@ -41,6 +41,32 @@
 					</execution>
 				</executions>
 			</plugin>
+			<plugin>
+				<groupId>com.google.code.maven-replacer-plugin</groupId>
+				<artifactId>replacer</artifactId>
+				<version>1.5.3</version>
+				<executions>
+					<execution>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>replace</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<filesToInclude>${project.build.directory}/generated-sources/antlr4/org/toilelibre/libe/prime/*.java</filesToInclude>
+					<replacements>
+						<replacement>
+							<token> public class </token>
+							<value> class </value>
+						</replacement>
+						<replacement>
+							<token> public interface </token>
+							<value> interface </value>
+						</replacement>
+					</replacements>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 	<dependencies>
