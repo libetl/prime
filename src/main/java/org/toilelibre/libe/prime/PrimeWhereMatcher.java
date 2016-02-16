@@ -66,7 +66,7 @@ class PrimeWhereMatcher {
 
 		private Object returnMethodResult(final PrimeWhere condition, final Object candidateDbo) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 			Method m =  candidateDbo.getClass ().getMethod (
-					condition.getExpression().indexO f('(') != -1 ? condition.getExpression ().substring (0, condition.getExpression ().indexOf ('(')) : condition.getExpression ());
+					condition.getExpression ().indexOf ('(') != -1 ? condition.getExpression ().substring (0, condition.getExpression ().indexOf ('(')) : condition.getExpression ());
 			m.setAccessible(true);
 			return m.invoke (candidateDbo);
 		}
