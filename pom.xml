@@ -37,6 +37,8 @@
 							<outputDirectory>
 								${project.build.directory}/generated-sources/antlr4/org/toilelibre/libe/prime
 							</outputDirectory>
+							<listener>false</listener>
+							<visitor>false</visitor>
 						</configuration>
 					</execution>
 				</executions>
