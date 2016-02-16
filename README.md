@@ -18,7 +18,7 @@ PRIME stands for 'Pojo Raw In Memory Engine'
   public class MyClass {
     //...
     public void method () {
-      A a = new A (2, 1, Arrays.asList (new D (1), new D(2)));
+      A a = new A (2, 1, Arrays.asList (new D (1), new D (2)));
       A vA = $ (A.class); // virtual A
       D vD = $ (D.class); // virtual D
       //Add a in global database
