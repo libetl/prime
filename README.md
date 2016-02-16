@@ -13,14 +13,16 @@ PRIME stands for 'Pojo Raw In Memory Engine'
   public void method () {
 
     A a = new A (2, 1, Arrays.asList (new D (1), new D(2)));
+    A vA = $ (A.class); // virtual A
+    D vD = $ (D.class); // virtual D
     //Add a in global database
     Database.store (a);
   
     //Get any A instance in the database where b = 2 and c = 1
-    select (A.class).where (eq ($ (A.class).getB (), 2)).and (eq ($ (A.class).getC (), 1)).list ();
+    select (A.class).where (eq (vA.getB (), 2)).and (eq (vA.getC (), 1)).list ();
   
     //Get any D instance inside A.getD () where e = 2
-    select ($(a).getD ()).where (eq ($ (D.class).getE (), 2)).list ();
+    select ($(a).getD ()).where (eq (vD.getE (), 2)).list ();
     
     //this also works, but hides the usage in your IDE. Can be useful for external queries.
     list ("select mypackage.D where attribute[c] != 3");
