@@ -9,6 +9,9 @@ PRIME stands for 'Pojo Raw In Memory Engine'
   import static org.toilelibre.libe.prime.Prime.list;
   import static org.toilelibre.libe.prime.Matcher.eq;
   
+  import mypackage.A;
+  import mypackage.D;
+  
   //...
   public void method () {
 
