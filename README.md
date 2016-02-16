@@ -6,6 +6,7 @@ PRIME stands for 'Pojo Raw In Memory Engine'
 ```java
   import static org.toilelibre.libe.prime.Prime.select;
   import static org.toilelibre.libe.prime.Prime.$;
+  import static org.toilelibre.libe.prime.Prime.list;
   import static org.toilelibre.libe.prime.Matcher.eq;
   
   //...
@@ -24,7 +25,7 @@ PRIME stands for 'Pojo Raw In Memory Engine'
     select($(a).getD ()).where (eq($(D.class).getE (), 2)).list();
     
     //this also works, but hides the usage in your IDE. Can be useful for external queries.
-    Prime.<A>list ("select mypackage.D where attribute[c] != 3");
+    list ("select mypackage.D where attribute[c] != 3");
   }
   
   //...
