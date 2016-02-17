@@ -24,7 +24,7 @@ public class MyClass {
 	public void method() {
 		// New object
 		A a = new A(2, 1, Arrays.asList(new D(1), new D(2)));
-		// Add a in global database
+		// Add a in global in-memory database
 		Database.store(a);
 		A vA = $(A.class); // virtual A
 		D vD = $(D.class); // virtual D
