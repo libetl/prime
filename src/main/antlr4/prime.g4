@@ -34,7 +34,6 @@ value : QUOTE? (WORD | NUMBER) QUOTE? ;
 //keywords
 SELECT:'select';
 ADD:'add';
-WITH:'with';
 WHERE:'where';
 OR:'or';
 AND:'and';
