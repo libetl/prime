@@ -32,6 +32,7 @@ public class Prime<T> implements PrimeQueryWhereSelector<T>, PrimeQueryCondition
     private String        target;
     private StringBuilder where;
     private int           limit;
+    private String        listId;
 
     private Prime () {
         this.where = new StringBuilder ();
@@ -49,13 +50,13 @@ public class Prime<T> implements PrimeQueryWhereSelector<T>, PrimeQueryCondition
     }
 
     @Override
-    public Prime<T> and (final Matcher matcher) {
-        this.where.append (" and " + matcher.getValue ());
+    public PrimeQueryConditionSelector<T> and (final Matcher matcher) {
+        this.where.append (PrimeRequestBuilder.buildAndWhere (matcher.getValue ()));
         return this;
     }
 
     @Override
-    public PrimeQueryConditionSelector<T> limit (final int limit) {
+    public PrimeQueryResultListSelector<T> limit (final int limit) {
         this.limit = limit;
         return this;
     }
@@ -63,12 +64,18 @@ public class Prime<T> implements PrimeQueryWhereSelector<T>, PrimeQueryCondition
     @Override
     @SuppressWarnings ("unchecked")
     public List<T> list () {
-        return ((List<T>) PrimeQueryExecutor.execute (PrimeRequestBuilder.build (this.target, this.where.toString (), this.limit)));
+        return ((List<T>) PrimeQueryExecutor.execute (PrimeRequestBuilder.build (this.target, this.where.toString (), this.limit, this.listId)));
     }
 
     @Override
     public PrimeQueryConditionSelector<T> or (final Matcher matcher) {
-        this.where.append (" or " + matcher.getValue ());
+        this.where.append (PrimeRequestBuilder.buildOrWhere (matcher.getValue ()));
+        return this;
+    }
+
+    @Override
+    public PrimeQueryReady<T> saveAs (final String listId) {
+        this.listId = listId;
         return this;
     }
 
