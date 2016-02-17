@@ -32,11 +32,6 @@ class PrimeWhereSubExprFinder {
             this.expressions = expressions;
         }
 
-        @Override
-        public Object clone () {
-            return new SubExpression (this.start, this.end, new ArrayList<PrimeWhere> (this.expressions));
-        }
-
         public int getEnd () {
             return this.end;
         }
