@@ -71,8 +71,7 @@ class PrimeWhereResolver {
         for (final PrimeWhere dbwherecondition : subexpression.getExpressions ()) {
             or = !firstConditionFound || !"and".equals (dbwherecondition.getConjunction ());
             firstConditionFound = true;
-            truth = "?".equals (dbwherecondition.getExpression ()) ? truth
-                    : or ? truth || PrimeWhereMatcher.matchesCondition (candidate, dbwherecondition) : truth && PrimeWhereMatcher.matchesCondition (candidate, dbwherecondition);
+            truth = or ? truth || PrimeWhereMatcher.matchesCondition (candidate, dbwherecondition) : truth && PrimeWhereMatcher.matchesCondition (candidate, dbwherecondition);
         }
         for (int i = 0 ; i < subexpression.getExpressions ().size () ; i++) {
             if (!"?".equals (subexpression.getExpressions ().get (i).getExpression ())) {

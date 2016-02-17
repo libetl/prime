@@ -82,6 +82,9 @@ class PrimeWhereMatcher {
     }
 
     static boolean matchesCondition (final Object candidateDbo, final PrimeWhere cond) {
+    	if("?".equals (cond.getExpression ())){
+    		return Boolean.valueOf (cond.getValue());
+    	}
         return Operator.fromSymbol (cond.getOperator ()).test (cond, candidateDbo);
     }
 }
