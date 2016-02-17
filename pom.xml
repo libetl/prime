@@ -22,9 +22,9 @@
 		</developer>
 	</developers>
 	<scm>
-		<connection>scm:git:git@github.com:libetl/soundtransform.git</connection>
-		<developerConnection>scm:git:git@github.com:libetl/soundtransform.git</developerConnection>
-		<url>git@github.com:libetl/soundtransform.git</url>
+		<connection>scm:git:git@github.com:libetl/prime.git</connection>
+		<developerConnection>scm:git:git@github.com:libetl/prime.git</developerConnection>
+		<url>git@github.com:libetl/prime.git</url>
 		<tag>v${project.version}</tag>
 	</scm>
 	<distributionManagement>
