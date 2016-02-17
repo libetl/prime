@@ -2,22 +2,21 @@ package org.toilelibre.libe.prime;
 
 import java.util.Arrays;
 
-import javassist.CtClass;
 
 class DefaultResponseBuilder {
 
-    public static String getDefaultResponseForType (final CtClass returnType) {
-        if (Arrays.asList (CtClass.intType, CtClass.byteType, CtClass.charType, CtClass.doubleType, CtClass.floatType, CtClass.intType, CtClass.longType, CtClass.shortType)
+    public static Object getDefaultResponseForType (final Class<?> returnType) {
+        if (Arrays.asList (int.class, byte.class, char.class, double.class, float.class, int.class, long.class, short.class)
                 .contains (returnType)) {
-            return "0";
+            return 0;
         }
-        if (returnType == CtClass.booleanType) {
-            return "false";
+        if (returnType == boolean.class || returnType == Boolean.class) {
+            return false;
         }
-        if (returnType != CtClass.voidType) {
-            return "null";
+        if (returnType == String.class) {
+            return "";
         }
-        return "";
+        return null;
     }
 
 }
