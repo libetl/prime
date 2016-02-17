@@ -17,10 +17,11 @@ operator : EQUALS | DIFFERENT | LIKE;
 
 conjunction: OR | AND;
 
-expression : (ATTRIBUTE LBRACKET QUOTE? field QUOTE? RBRACKET) | method LPAREN RPAREN;
+expression : (ATTRIBUTE LBRACKET QUOTE? field QUOTE? RBRACKET) | method LPAREN args? RPAREN;
 
 field : WORD;
 method : WORD;
+args : (value COMMA)* value;
 
 limit : LIMIT NUMBER;
 
@@ -52,6 +53,7 @@ SEMICOLON : ';';
 QUOTE : '\'';
 DQUOTE : '\"';
 DOT:'.';
+COMMA:',';
 DOLLAR:'$';
 
 NUMBER : [0-9]+;
