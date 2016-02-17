@@ -7,25 +7,19 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.toilelibre.libe.prime.PrimeWhereSubExprFinder.SubExpression;
 
 class PrimeCommandReader {
-    private static Map<Integer, List<SubExpression>> cloneSubExprs (final Map<Integer, List<SubExpression>> subExprsMap) {
-        final Map<Integer, List<SubExpression>> result = new HashMap<Integer, List<SubExpression>> ();
-        for (final Entry<Integer, List<SubExpression>> entry : subExprsMap.entrySet ()) {
-            result.put (entry.getKey (), new ArrayList<SubExpression> ());
-            for (final SubExpression subexpr : entry.getValue ()) {
-                result.get (entry.getKey ()).add ((SubExpression) subexpr.clone ());
-            }
-        }
-        return result;
+    private static void resetSubExprs (final List<List<SubExpression>> subExprsModel, List<PrimeWhere> savedWhereList) {
+    	for (int i = 0 ; i < savedWhereList.size () ; i++) {
+    		subExprsModel.get(0).get(0).getExpressions().set(i, savedWhereList.get(i));
+    	}
     }
 
     public static List<Object> execute (final String request) {
@@ -137,13 +131,14 @@ class PrimeCommandReader {
     }
 
     private static <T> List<T> launchQuery (final Class<T> type, final List<PrimeWhere> conditions, final Object container, final Method method) {
-        final Map<Integer, List<SubExpression>> subExprsModel = PrimeWhereSubExprFinder.findSubConditions (conditions);
+        final List<List<SubExpression>> subExprs = PrimeWhereSubExprFinder.findSubConditions (conditions);
+        final List<PrimeWhere> savedWhereList = new LinkedList<PrimeWhere> (subExprs.get(0).get(0).getExpressions());
         @SuppressWarnings ("unchecked")
         final Collection<T> collection = (Collection<T>) ( (container != null) && (method != null) ? PrimeCommandReader.getTargetCollection (container, method)
                 : Database.listType (type));
         final List<T> result = new ArrayList<T> ();
         for (final T element : collection) {
-            final Map<Integer, List<SubExpression>> subExprs = PrimeCommandReader.cloneSubExprs (subExprsModel);
+            PrimeCommandReader.resetSubExprs (subExprs, savedWhereList);
             if (PrimeWhereResolver.findTruth (PrimeWhereResolver.resolve (subExprs, element).get (0).get (0))) {
                 result.add (element);
             }

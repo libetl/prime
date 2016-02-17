@@ -3,8 +3,6 @@ package org.toilelibre.libe.prime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 
 /**
  * Resolves a Tree of DBWhereConditions into a single boolean value To resolve a
@@ -52,15 +50,15 @@ class PrimeWhereResolver {
      * @throws CloudException
      *             can be thrown inside a DBObject match condition test.
      */
-    public static Map<Integer, List<PrimeWhereSubExprFinder.SubExpression>> resolve (final Map<Integer, List<PrimeWhereSubExprFinder.SubExpression>> subconds,
+    public static List<List<PrimeWhereSubExprFinder.SubExpression>> resolve (final List<List<PrimeWhereSubExprFinder.SubExpression>> subconds,
             final Object candidate) {
         if (candidate == null) {
-            return Collections.singletonMap (0, Collections
+            return Collections.singletonList (Collections
                     .singletonList (new PrimeWhereSubExprFinder.SubExpression (0, 0, Collections.<PrimeWhere> singletonList (new PrimeWhere (null, 0, "?", "==", "false", 0)))));
         }
 
-        for (final Entry<Integer, List<PrimeWhereSubExprFinder.SubExpression>> level : subconds.entrySet ()) {
-            PrimeWhereResolver.resolveLevel (level.getKey (), level.getValue (), candidate);
+        for (int level = subconds.size () - 1 ; level >= 0 ; level--) {
+            PrimeWhereResolver.resolveLevel (level, subconds.get(level), candidate);
         }
 
         return subconds;

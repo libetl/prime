@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 
 /**
  * Converts a list of conditions into a tree of nested subconditions map This
@@ -52,16 +50,16 @@ class PrimeWhereSubExprFinder {
         }
     }
 
-    private static void addToResult (final List<PrimeWhere> conditions, final int level, final Map<Integer, List<SubExpression>> result, final int innerStart, final int innerEnd) {
-        if (result.get (level) == null) {
-            result.put (level, new LinkedList<SubExpression> ());
+    private static void addToResult (final List<PrimeWhere> conditions, final int level, final List<List<SubExpression>> result, final int innerStart, final int innerEnd) {
+        while (result.size() <= level) {
+        	result.add(new LinkedList<SubExpression> ());
         }
         final List<PrimeWhere> subList = conditions.subList (innerStart, Math.min (innerEnd + 1, conditions.size ()));
         result.get (level).add (new SubExpression (innerStart, innerEnd, subList));
     }
 
-    private static void concatenateResultWith (final Map<Integer, List<SubExpression>> result, final Map<Integer, List<SubExpression>> additions) {
-        result.putAll (additions);
+    private static void concatenateResultWith (final List<List<SubExpression>> result, final List<List<SubExpression>> additions) {
+        result.addAll (additions);
     }
 
     /**
@@ -73,7 +71,7 @@ class PrimeWhereSubExprFinder {
      *            a flat list of conditions
      * @return a map of nested conditions
      */
-    public static Map<Integer, List<SubExpression>> findSubConditions (final List<PrimeWhere> conditions) {
+    public static List<List<SubExpression>> findSubConditions (final List<PrimeWhere> conditions) {
         if ( (conditions == null) || !PrimeWhereSubExprFinder.pairingIsOk (conditions)) {
             throw new IllegalArgumentException ("Invalid conditions passed in parameters");
         }
@@ -84,17 +82,17 @@ class PrimeWhereSubExprFinder {
             } catch (final CloneNotSupportedException e) {
             }
         }
-        final Map<Integer, List<SubExpression>> result = new TreeMap<> (Collections.reverseOrder ());
+        final List<List<SubExpression>> result = new LinkedList<> ();
         PrimeWhereSubExprFinder.concatenateResultWith (result, PrimeWhereSubExprFinder.findSubconds (conditions2, 0, conditions.size () - 1, 0));
         PrimeWhereSubExprFinder.addToResult (conditions2, 0, result, 0, Math.max (0, conditions.size () - 1));
         return result;
     }
 
-    private static Map<Integer, List<SubExpression>> findSubconds (final List<PrimeWhere> conditions, final int start, final int end, final int level) {
+    private static List<List<SubExpression>> findSubconds (final List<PrimeWhere> conditions, final int start, final int end, final int level) {
         if (start >= end) {
-            return Collections.emptyMap ();
+            return Collections.emptyList();
         }
-        final Map<Integer, List<SubExpression>> result = new TreeMap<> ();
+        final List<List<SubExpression>> result = new LinkedList<> ();
         int nestedLevel = 0;
         int innerStart = 0;
         int innerEnd = 0;
@@ -140,7 +138,7 @@ class PrimeWhereSubExprFinder {
         return true;
     }
 
-    private static void restartSameScopeNestedOnce (final List<PrimeWhere> conditions, final int level, final Map<Integer, List<SubExpression>> result, final int innerStart,
+    private static void restartSameScopeNestedOnce (final List<PrimeWhere> conditions, final int level, final List<List<SubExpression>> result, final int innerStart,
             final int innerEnd) {
         final List<PrimeWhere> subConditions = new ArrayList<> (conditions);
         final PrimeWhere startCondition = conditions.get (innerStart);
