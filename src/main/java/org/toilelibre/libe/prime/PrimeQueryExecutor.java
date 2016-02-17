@@ -7,6 +7,7 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -15,48 +16,42 @@ import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.toilelibre.libe.prime.PrimeWhereSubExprFinder.SubExpression;
 
-class PrimeCommandReader {
-    private static void resetSubExprs (final List<List<SubExpression>> subExprsModel, List<PrimeWhere> savedWhereList) {
-    	for (int i = 0 ; i < savedWhereList.size () ; i++) {
-    		subExprsModel.get(0).get(0).getExpressions().set(i, savedWhereList.get(i));
-    	}
-    }
-
+class PrimeQueryExecutor {
     public static List<Object> execute (final String request) {
         final primeParser parser = new primeParser (new CommonTokenStream (new primeLexer (new ANTLRInputStream (request))));
 
         for (final primeParser.CommandContext command : parser.primerequest ().command ()) {
             if (!command.query ().isEmpty ()) {
-                return PrimeCommandReader.executeQuery (command.query ());
+                return PrimeQueryExecutor.executeQuery (command.query ());
             }
         }
         return null;
     }
 
-    private static <T> List<T> executeDatabaseQuery (final Class<T> type, final List<PrimeWhere> conditions) {
-        return PrimeCommandReader.launchQuery (type, conditions, null, null);
+    private static <T> List<T> executeDatabaseQuery (final Class<T> type, final List<PrimeWhere> conditions, final int limit) {
+        return PrimeQueryExecutor.launchQuery (type, conditions, null, null, limit);
     }
 
-    private static <T> List<T> executeObjectQuery (final Object container, final Method method, final Class<T> type, final List<PrimeWhere> conditions) {
-        return PrimeCommandReader.launchQuery (type, conditions, container, method);
+    private static <T> List<T> executeObjectQuery (final Object container, final Method method, final Class<T> type, final List<PrimeWhere> conditions, final int limit) {
+        return PrimeQueryExecutor.launchQuery (type, conditions, container, method, limit);
     }
 
-    private static <T> List<T> executeQuery (final Class<T> type, final Method methodIfExists, final List<PrimeWhere> conditions) {
+    private static <T> List<T> executeQuery (final Class<T> type, final Method methodIfExists, final List<PrimeWhere> conditions, final int limit) {
         final Object container = ReferenceRecorder.popCurrentThreadRecordedObject ();
         if (container == null) {
-            return PrimeCommandReader.executeDatabaseQuery (type, conditions);
+            return PrimeQueryExecutor.executeDatabaseQuery (type, conditions, limit);
         }
-        return PrimeCommandReader.executeObjectQuery (container, methodIfExists, type, conditions);
+        return PrimeQueryExecutor.executeObjectQuery (container, methodIfExists, type, conditions, limit);
     }
 
     private static <T> List<T> executeQuery (final primeParser.QueryContext query) {
         final String typeAsString = query.returnedType ().getText ();
-        final Method method = PrimeCommandReader.getMethodIfApplicable (typeAsString);
+        final Method method = PrimeQueryExecutor.getMethodIfApplicable (typeAsString);
         Class<T> returnType = null;
         if (method != null) {
-            returnType = PrimeCommandReader.getParameterizedReturnType (method);
+            returnType = PrimeQueryExecutor.getParameterizedReturnType (method);
         } else {
-            returnType = PrimeCommandReader.getCorrectReturnType (typeAsString);
+            returnType = PrimeQueryExecutor.getCorrectReturnType (typeAsString);
         }
 
         final List<PrimeWhere> conditions = new ArrayList<PrimeWhere> ();
@@ -65,11 +60,12 @@ class PrimeCommandReader {
             final primeParser.ConjunctionContext conjunction = i > 0 ? query.wherecriterias ().criterias ().conjunction (i - 1) : null;
             conditions
                     .add (new PrimeWhere (conjunction == null ? null : conjunction.getText (), (criteria.LPAREN () == null ? Collections.emptyList () : criteria.LPAREN ()).size (),
-                             criteria.expression ().getText (), criteria.operator ().getText (), criteria.value ().getText ().replaceAll ("^'", "").replaceAll ("'$", ""),
+                            criteria.expression ().getText (), criteria.operator ().getText (), criteria.value ().getText ().replaceAll ("^'", "").replaceAll ("'$", ""),
                             (criteria.RPAREN () == null ? Collections.emptyList () : criteria.RPAREN ()).size ()));
 
         }
-        return PrimeCommandReader.executeQuery (returnType, method, conditions);
+        final int limit = query.limit () == null ? -1 : Integer.parseInt (query.limit ().integer ().getText ());
+        return PrimeQueryExecutor.executeQuery (returnType, method, conditions, limit);
     }
 
     @SuppressWarnings ("unchecked")
@@ -95,7 +91,8 @@ class PrimeCommandReader {
 
     private static Method getMethodIfApplicable (final String typeAsString) {
         try {
-            return Class.forName (typeAsString.indexOf ('.') == -1 ? typeAsString : typeAsString.substring (0, typeAsString.lastIndexOf ('.'))).getMethod (typeAsString.substring (typeAsString.lastIndexOf ('.') + 1));
+            return Class.forName (typeAsString.indexOf ('.') == -1 ? typeAsString : typeAsString.substring (0, typeAsString.lastIndexOf ('.')))
+                    .getMethod (typeAsString.substring (typeAsString.lastIndexOf ('.') + 1));
         } catch (NoSuchMethodException | SecurityException | ClassNotFoundException e) {
             return null;
         }
@@ -106,7 +103,7 @@ class PrimeCommandReader {
         try {
             final Type type = m.getGenericReturnType ();
             if (type != null) {
-                return PrimeCommandReader.findReturnTypeForParameterizedType ((ParameterizedType) type);
+                return PrimeQueryExecutor.findReturnTypeForParameterizedType ((ParameterizedType) type);
             }
             return null;
         } catch (final SecurityException e) {
@@ -118,7 +115,7 @@ class PrimeCommandReader {
     @SuppressWarnings ("unchecked")
     private static <T> Collection<T> getTargetCollection (final Object container, final Method method) {
         try {
-        	method.setAccessible(true);
+            method.setAccessible (true);
             final Object o = method.invoke (container);
             if (o instanceof Map) {
                 return (Collection<T>) ((Map<?, ?>) o).values ();
@@ -129,19 +126,29 @@ class PrimeCommandReader {
         }
     }
 
-    private static <T> List<T> launchQuery (final Class<T> type, final List<PrimeWhere> conditions, final Object container, final Method method) {
+    private static <T> List<T> launchQuery (final Class<T> type, final List<PrimeWhere> conditions, final Object container, final Method method, final int limit) {
         final List<List<SubExpression>> subExprs = PrimeWhereSubExprFinder.findSubConditions (conditions);
-        final List<PrimeWhere> savedWhereList = new LinkedList<PrimeWhere> (subExprs.get(0).get(0).getExpressions());
+        final List<PrimeWhere> savedWhereList = new LinkedList<PrimeWhere> (subExprs.get (0).get (0).getExpressions ());
         @SuppressWarnings ("unchecked")
-        final Collection<T> collection = (Collection<T>) ( (container != null) && (method != null) ? PrimeCommandReader.getTargetCollection (container, method)
+        final Collection<T> collection = (Collection<T>) ( (container != null) && (method != null) ? PrimeQueryExecutor.getTargetCollection (container, method)
                 : Database.listType (type));
         final List<T> result = new ArrayList<T> ();
-        for (final T element : collection) {
-            PrimeCommandReader.resetSubExprs (subExprs, savedWhereList);
+        final Iterator<T> iterator = collection.iterator ();
+        int added = 0;
+        while (iterator.hasNext () && ( (added < limit) || (limit < 0))) {
+            final T element = iterator.next ();
+            PrimeQueryExecutor.resetSubExprs (subExprs, savedWhereList);
             if (PrimeWhereResolver.findTruth (PrimeWhereResolver.resolve (subExprs, element).get (0).get (0))) {
+                added++;
                 result.add (element);
             }
         }
         return result;
+    }
+
+    private static void resetSubExprs (final List<List<SubExpression>> subExprsModel, final List<PrimeWhere> savedWhereList) {
+        for (int i = 0 ; i < savedWhereList.size () ; i++) {
+            subExprsModel.get (0).get (0).getExpressions ().set (i, savedWhereList.get (i));
+        }
     }
 }

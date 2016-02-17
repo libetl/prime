@@ -3,10 +3,10 @@ package org.toilelibre.libe.prime;
 import java.lang.reflect.Method;
 import java.util.List;
 
-public class Prime<T> {
+public class Prime<T> implements PrimeQueryWhereSelector<T>, PrimeQueryConditionSelector<T>, PrimeQueryReady<T> {
 
     public static <T> T $ (final Class<T> templateClass) {
-    	return Virtualizer.virtualize (templateClass);
+        return Virtualizer.virtualize (templateClass);
     }
 
     @SuppressWarnings ("unchecked")
@@ -17,10 +17,10 @@ public class Prime<T> {
 
     @SuppressWarnings ("unchecked")
     public static <T> List<T> list (final String request) {
-        return ((List<T>) PrimeCommandReader.execute (request));
+        return ((List<T>) PrimeQueryExecutor.execute (request));
     }
 
-    public static <T> Prime<T> select (final Class<T> clazz) {
+    public static <T> PrimeQueryWhereSelector<T> select (final Class<T> clazz) {
         return new Prime<T> (clazz);
     }
 
@@ -29,41 +29,51 @@ public class Prime<T> {
         return new Prime<T> (m);
     }
 
-	private StringBuilder request;
-	private StringBuilder where;
+    private String        target;
+    private StringBuilder where;
+    private int           limit;
 
-	private Prime () {
-        this.request = new StringBuilder ();
+    private Prime () {
         this.where = new StringBuilder ();
+        this.limit = -1;
     }
 
     private Prime (final Class<T> clazz) {
         this ();
-        this.request.append ("select " + clazz.getName () + " limit 10 where ;");
+        this.target = clazz.getName ();
     }
 
     private Prime (final Method m) {
         this ();
-        this.request.append ("select " + m.getDeclaringClass ().getName () + "." + m.getName () + " limit 10 where ;");
+        this.target = m.getDeclaringClass ().getName () + "." + m.getName ();
     }
 
-
+    @Override
     public Prime<T> and (final Matcher matcher) {
         this.where.append (" and " + matcher.getValue ());
         return this;
     }
 
-    @SuppressWarnings ("unchecked")
-    public List<T> list () {
-        return ((List<T>) PrimeCommandReader.execute (this.request.toString ().replace ("where ", "where " + this.where + "")));
+    @Override
+    public PrimeQueryConditionSelector<T> limit (final int limit) {
+        this.limit = limit;
+        return this;
     }
 
-    public Prime<T> or (final Matcher matcher) {
+    @Override
+    @SuppressWarnings ("unchecked")
+    public List<T> list () {
+        return ((List<T>) PrimeQueryExecutor.execute (PrimeRequestBuilder.build (this.target, this.where.toString (), this.limit)));
+    }
+
+    @Override
+    public PrimeQueryConditionSelector<T> or (final Matcher matcher) {
         this.where.append (" or " + matcher.getValue ());
         return this;
     }
 
-    public Prime<T> where (final Matcher matcher) {
+    @Override
+    public PrimeQueryConditionSelector<T> where (final Matcher matcher) {
         this.where.append (matcher.getValue ());
         return this;
     }

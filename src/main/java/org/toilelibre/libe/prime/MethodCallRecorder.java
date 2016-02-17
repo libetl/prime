@@ -12,6 +12,6 @@ class MethodCallRecorder {
     }
 
     public static void recordCall (final Method m) {
-    	MethodCallRecorder.lastMethod.set (m);
+        MethodCallRecorder.lastMethod.set (m);
     }
 }

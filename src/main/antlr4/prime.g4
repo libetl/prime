@@ -7,7 +7,7 @@ primerequest : (command SEMICOLON)* command SEMICOLON? EOF;
 
 command : query;
 
-query : SELECT returnedType limit? wherecriterias? saveAs?;
+query : SELECT returnedType wherecriterias? limit? saveAs?;
 
 returnedType : type | methodReturnType | resultListType;
 wherecriterias : WHERE (criterias | TRUE);
@@ -25,14 +25,16 @@ args : (value COMMA)* value;
 resultListType : (RESULTLIST LBRACKET QUOTE? field QUOTE? RBRACKET);
 
 // non hierarchical nodes
-limit : LIMIT NUMBER;
+limit : LIMIT integer;
 operator : EQUALS | DIFFERENT | LIKE;
 objectPath : (WORD (DOT | DOLLAR)?)+;
 conjunction : OR | AND;
-value : (QUOTE? (WORD | NUMBER) QUOTE?) | (DQUOTE ANYTHING_BUT_DQUOTE? DQUOTE);
+value : (QUOTE? (WORD | number) QUOTE?) | (DQUOTE ANYTHING_BUT_DQUOTE? DQUOTE);
 field : WORD;
 method : WORD;
 type : WORD;
+number : MINUS?DIGIT+(DOT DIGIT+)?;
+integer : MINUS?DIGIT+;
 
 //keywords
 SELECT : 'select';
@@ -59,12 +61,13 @@ DQUOTE : '\"';
 DOT : '.';
 COMMA : ',';
 DOLLAR : '$';
-TRUE: 'true';
+TRUE : 'true';
+MINUS : '-';
 
 //pure regex
 ANYTHING_BUT_DQUOTE : ([^"]|'\"')+;
-NUMBER : [0-9]+;
 WORD : [a-zA-Z][a-zA-Z0-9_]*;
 WHITESPACE : [ \t\r\n]+ -> skip;
+DIGIT : [0-9];
 
         

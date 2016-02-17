@@ -34,7 +34,7 @@ class PrimeWhereMatcher {
             }
             return null;
         }
-        
+
         private final String symbol;
 
         private final Tester tester;
@@ -56,35 +56,35 @@ class PrimeWhereMatcher {
 
             try {
                 if (condition.getExpression ().matches (Tester.ATTRIBUTE)) {
-                    return this.returnFieldValue(condition, candidateDbo);
+                    return this.returnFieldValue (condition, candidateDbo);
                 }
-                return this.returnMethodResult(condition, candidateDbo);
+                return this.returnMethodResult (condition, candidateDbo);
             } catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
                 return null;
             }
         }
 
-		private Object returnMethodResult(final PrimeWhere condition, final Object candidateDbo) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-			Method m =  candidateDbo.getClass ().getMethod (
-					condition.getExpression ().indexOf ('(') != -1 ? condition.getExpression ().substring (0, condition.getExpression ().indexOf ('(')) : condition.getExpression ());
-			m.setAccessible(true);
-			return m.invoke (candidateDbo);
-		}
+        private Object returnFieldValue (final PrimeWhere condition, final Object candidateDbo) throws NoSuchFieldException, IllegalAccessException {
+            final String fieldAsString = condition.getExpression ().replaceAll (Tester.ATTRIBUTE, "$1");
+            final Field field = candidateDbo.getClass ().getDeclaredField (fieldAsString);
+            field.setAccessible (true);
+            return field.get (candidateDbo);
+        }
 
-		private Object returnFieldValue(final PrimeWhere condition, final Object candidateDbo) throws NoSuchFieldException, IllegalAccessException {
-			final String fieldAsString = condition.getExpression ().replaceAll (Tester.ATTRIBUTE, "$1");
-			final Field field = candidateDbo.getClass ().getDeclaredField (fieldAsString);
-			field.setAccessible (true);
-			return field.get (candidateDbo);
-		}
+        private Object returnMethodResult (final PrimeWhere condition, final Object candidateDbo) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+            final Method m = candidateDbo.getClass ().getMethod (condition.getExpression ().indexOf ('(') != -1
+                    ? condition.getExpression ().substring (0, condition.getExpression ().indexOf ('(')) : condition.getExpression ());
+            m.setAccessible (true);
+            return m.invoke (candidateDbo);
+        }
 
         abstract boolean test (PrimeWhere condition, Object candidateDbo);
     }
 
     static boolean matchesCondition (final Object candidateDbo, final PrimeWhere cond) {
-    	if("?".equals (cond.getExpression ())){
-    		return Boolean.valueOf (cond.getValue());
-    	}
+        if ("?".equals (cond.getExpression ())) {
+            return Boolean.valueOf (cond.getValue ());
+        }
         return Operator.fromSymbol (cond.getOperator ()).test (cond, candidateDbo);
     }
 }

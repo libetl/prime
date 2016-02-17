@@ -50,15 +50,14 @@ class PrimeWhereResolver {
      * @throws CloudException
      *             can be thrown inside a DBObject match condition test.
      */
-    public static List<List<PrimeWhereSubExprFinder.SubExpression>> resolve (final List<List<PrimeWhereSubExprFinder.SubExpression>> subconds,
-            final Object candidate) {
+    public static List<List<PrimeWhereSubExprFinder.SubExpression>> resolve (final List<List<PrimeWhereSubExprFinder.SubExpression>> subconds, final Object candidate) {
         if (candidate == null) {
             return Collections.singletonList (Collections
                     .singletonList (new PrimeWhereSubExprFinder.SubExpression (0, 0, Collections.<PrimeWhere> singletonList (new PrimeWhere (null, 0, "?", "==", "false", 0)))));
         }
 
         for (int level = subconds.size () - 1 ; level >= 0 ; level--) {
-            PrimeWhereResolver.resolveLevel (level, subconds.get(level), candidate);
+            PrimeWhereResolver.resolveLevel (level, subconds.get (level), candidate);
         }
 
         return subconds;
@@ -67,7 +66,7 @@ class PrimeWhereResolver {
     private static boolean resolveDBWhereConditionsList (final PrimeWhereSubExprFinder.SubExpression subexpression, final Object candidate) {
         boolean or = true;
         boolean truth = false;
-        boolean firstConditionFound = subexpression.getExpressions().isEmpty();
+        boolean firstConditionFound = subexpression.getExpressions ().isEmpty ();
         for (final PrimeWhere dbwherecondition : subexpression.getExpressions ()) {
             or = !firstConditionFound || !"and".equals (dbwherecondition.getConjunction ());
             firstConditionFound = true;

@@ -7,15 +7,11 @@ import java.util.List;
 
 /**
  * Converts a list of conditions into a tree of nested subconditions map This
- * structure can be more easily resolved than a flat list 
- * Example : [ dbwc1 and dbwc2 or (dbwc3 and (dbwc4 or dbwc5)) and dbwc6 ] 
- *          => dbwc1 and dbwc2 or \____________________________________ and dbwc6
- *                                | 
- *                                \_ dbwc3 and 
- *                                             \ 
- *                                             | 
- *                                             \_ dbwc4 or dbwc5
-
+ * structure can be more easily resolved than a flat list Example : [ dbwc1 and
+ * dbwc2 or (dbwc3 and (dbwc4 or dbwc5)) and dbwc6 ] => dbwc1 and dbwc2 or
+ * \____________________________________ and dbwc6 | \_ dbwc3 and \ | \_ dbwc4
+ * or dbwc5
+ *
  *
  */
 class PrimeWhereSubExprFinder {
@@ -46,8 +42,8 @@ class PrimeWhereSubExprFinder {
     }
 
     private static void addToResult (final List<PrimeWhere> conditions, final int level, final List<List<SubExpression>> result, final int innerStart, final int innerEnd) {
-        while (result.size() <= level) {
-        	result.add(new LinkedList<SubExpression> ());
+        while (result.size () <= level) {
+            result.add (new LinkedList<SubExpression> ());
         }
         final List<PrimeWhere> subList = conditions.subList (innerStart, Math.min (innerEnd + 1, conditions.size ()));
         result.get (level).add (new SubExpression (innerStart, innerEnd, subList));
@@ -85,7 +81,7 @@ class PrimeWhereSubExprFinder {
 
     private static List<List<SubExpression>> findSubconds (final List<PrimeWhere> conditions, final int start, final int end, final int level) {
         if (start >= end) {
-            return Collections.emptyList();
+            return Collections.emptyList ();
         }
         final List<List<SubExpression>> result = new LinkedList<> ();
         int nestedLevel = 0;
