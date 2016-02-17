@@ -42,7 +42,8 @@ public class MyClass {
 		// The language allows to store a temporary list and to use it in another request
 		// This example store in 'list1' all the database A instances where c = 5,
 		// and then query 'list1' to filter all the instances having b = 2.
-		final List<A> listOfA = Prime.<A>list ("select mypackage.A where getC () == 5 saveAs list1 ; select resultList['list1'] where getB () == 2");
+		final List<A> listOfA = Prime.<A>list ("select mypackage.A where getC () == 5 saveAs list1 ; " + 
+		                                       "select resultList['list1'] where getB () == 2");
 	}
 	// ...
 }
