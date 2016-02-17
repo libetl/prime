@@ -11,14 +11,14 @@ query : SELECT returnedType wherecriterias? limit? saveAs?;
 
 returnedType : type | methodReturnType | resultListType;
 wherecriterias : WHERE (criterias | TRUE);
-saveAs : SAVEAS field;
+saveAs : SAVEAS QUOTE? field QUOTE?;
 
 methodReturnType : objectPath;
 
 criterias : (criteria conjunction)* criteria;
 criteria : LPAREN* expression operator value RPAREN*;
 
-expression : (ATTRIBUTE LBRACKET QUOTE? field QUOTE? RBRACKET) | method LPAREN args? RPAREN;
+expression : (ATTRIBUTE LBRACKET  field QUOTE? RBRACKET) | method LPAREN args? RPAREN;
 
 args : (value COMMA)* value;
 
