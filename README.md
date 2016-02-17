@@ -1,5 +1,5 @@
 # prime
-PRIME stands for 'Pojo Raw In Memory Engine'
+ : stands for 'Pojo Raw In Memory Engine'
 
 ### How it works
 
