@@ -26,9 +26,8 @@ class PrimeCommandReader {
         final primeParser parser = new primeParser (new CommonTokenStream (new primeLexer (new ANTLRInputStream (request))));
 
         for (final primeParser.CommandContext command : parser.primerequest ().command ()) {
-            final primeParser.CommandbodyContext commandBody = command.commandbody ();
-            if (!commandBody.query ().isEmpty ()) {
-                return PrimeCommandReader.executeQuery (commandBody.query ());
+            if (!command.query ().isEmpty ()) {
+                return PrimeCommandReader.executeQuery (command.query ());
             }
         }
         return null;

@@ -2,21 +2,13 @@
  * Define a grammar called prime
  */
 grammar prime;
-@header {package org.toilelibre.libe.prime;}
-primerequest : (command)+ EOF;
+primerequest : (command SEMICOLON)* command SEMICOLON? EOF;
 
-command : commandbody SEMICOLON;
+command : query;
 
-commandbody : query | create | remove;
-
-query : SELECT returnedType limit? wherecriterias? lazyloading?;
-
-create : ADD type WITH criterias;
- 
-remove : REMOVE type ?;
+query : SELECT returnedType limit? wherecriterias?;
 
 wherecriterias: WHERE criterias;
-lazyloading : LAZYLOADING BOOLEAN;
 
 criterias : DQUOTE? (criteria conjunction)* criteria DQUOTE?;
 criteria : LPAREN* expression operator value RPAREN*?;
@@ -43,9 +35,7 @@ value : QUOTE? (WORD | NUMBER) QUOTE? ;
 SELECT:'select';
 ADD:'add';
 WITH:'with';
-REMOVE:'remove';
 WHERE:'where';
-LAZYLOADING:'lazyloading';
 OR:'or';
 AND:'and';
 LIMIT:'limit';

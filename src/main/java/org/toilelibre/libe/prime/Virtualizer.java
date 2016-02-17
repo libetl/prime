@@ -71,9 +71,8 @@ class Virtualizer {
 
     private static void setRecordBody (final CtClass subClass, final CtMethod method) throws CannotCompileException, NotFoundException {
         final CtMethod subclassedMethod = new CtMethod (method, subClass, null);
-        String body = "{" + MethodCallRecorder.class.getName () + ".recordCall(\"" + method.getLongName () + "\");";
-        body += "return " + DefaultResponseBuilder.getDefaultResponseForType (method.getReturnType ()) + ";";
-        body += "}";
+        String body = "{try{java.lang.Class c = Class.forName(\"" + MethodCallRecorder.class.getName () + "\");java.lang.reflect.Method m = c.getDeclaredMethod (\"recordCall\", new Class [] {String.class});m.setAccessible (true);m.invoke (\"" + 
+        null + "\", new Object []{\"" + method.getLongName () + "\"});} catch (Exception e){e.printStackTrace();}return " + DefaultResponseBuilder.getDefaultResponseForType (method.getReturnType ()) + ";}";
         subclassedMethod.setBody (body);
         subClass.addMethod (subclassedMethod);
     }
