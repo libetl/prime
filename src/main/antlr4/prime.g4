@@ -10,7 +10,7 @@ command : query;
 query : SELECT returnedType limit? wherecriterias? saveAs?;
 
 returnedType : type | methodReturnType | resultListType;
-wherecriterias : WHERE (criterias | ONE);
+wherecriterias : WHERE (criterias | TRUE);
 saveAs : SAVEAS field;
 
 methodReturnType : objectPath;
@@ -29,7 +29,7 @@ limit : LIMIT NUMBER;
 operator : EQUALS | DIFFERENT | LIKE;
 objectPath : (WORD (DOT | DOLLAR)?)+;
 conjunction : OR | AND;
-value : QUOTE? (WORD | NUMBER) QUOTE? | DQUOTE ANYTHING_BUT_DQUOTE? DQUOTE;
+value : (QUOTE? (WORD | NUMBER) QUOTE?) | (DQUOTE ANYTHING_BUT_DQUOTE? DQUOTE);
 field : WORD;
 method : WORD;
 type : WORD;
@@ -59,8 +59,7 @@ DQUOTE : '\"';
 DOT : '.';
 COMMA : ',';
 DOLLAR : '$';
-ONE : '1';
-BOOLEAN : 'true' | 'false';
+TRUE: 'true';
 
 //pure regex
 ANYTHING_BUT_DQUOTE : ([^"]|'\"')+;
