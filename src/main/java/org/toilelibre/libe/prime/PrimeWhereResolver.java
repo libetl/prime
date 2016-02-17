@@ -67,7 +67,7 @@ class PrimeWhereResolver {
     private static boolean resolveDBWhereConditionsList (final PrimeWhereSubExprFinder.SubExpression subexpression, final Object candidate) {
         boolean or = true;
         boolean truth = false;
-        boolean firstConditionFound = false;
+        boolean firstConditionFound = subexpression.getExpressions().isEmpty();
         for (final PrimeWhere dbwherecondition : subexpression.getExpressions ()) {
             or = !firstConditionFound || !"and".equals (dbwherecondition.getConjunction ());
             firstConditionFound = true;
