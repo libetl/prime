@@ -24,7 +24,7 @@ public class MyClass {
 	public void method() {
 		// New object
 		A a = new A(2, 1, Arrays.asList(new D(1), new D(2)));
-		// Add a in global database
+		// Add 'a' in global in-memory database
 		Database.store(a);
 		A vA = $(A.class); // virtual A
 		D vD = $(D.class); // virtual D
@@ -35,7 +35,7 @@ public class MyClass {
 		// Get any D instance inside the a.getD () result where e = 2
 		select($(a).getD()).where(eq(vD.getE(), 2)).list();
 
-		// This also works with plain text requests, but hides the usage in your IDE.
+		// This also works with plain text queries, but hides the usage in your IDE.
 		// Can be useful for external queries.
 		list("select mypackage.D where attribute[c] != 3");
 	}
