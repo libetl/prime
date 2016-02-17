@@ -18,7 +18,7 @@ class PrimeWhereMatcher {
             public boolean test (final PrimeWhere condition, final Object candidateDbo) {
                 return ! ("" + this.getCandidateValue (condition, candidateDbo)).equals (condition.getValue ());
             }
-        }), LIKE ("~~", new Tester () {
+        }), LIKE ("~=", new Tester () {
 
             @Override
             public boolean test (final PrimeWhere condition, final Object candidateDbo) {

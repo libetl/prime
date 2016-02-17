@@ -48,7 +48,7 @@ LBRACKET :  '[';
 RBRACKET :  ']';
 EQUALS:'==';
 DIFFERENT:'!=';
-LIKE:'~~';
+LIKE:'~=';
 SEMICOLON : ';';
 QUOTE : '\'';
 DQUOTE : '\"';
