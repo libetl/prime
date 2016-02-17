@@ -6,27 +6,27 @@ primerequest : (command SEMICOLON)* command SEMICOLON? EOF;
 
 command : query;
 
-query : SELECT returnedType limit? wherecriterias?;
-
-wherecriterias: WHERE criterias;
-
-criterias : DQUOTE? (criteria conjunction)* criteria DQUOTE?;
-criteria : LPAREN* expression operator value RPAREN*?;
-
-operator : EQUALS | DIFFERENT | LIKE;
-
-conjunction: OR | AND;
-
-expression : (ATTRIBUTE LBRACKET QUOTE? field QUOTE? RBRACKET) | method LPAREN args? RPAREN;
-
-field : WORD;
-method : WORD;
-args : (value COMMA)* value;
-
-limit : LIMIT NUMBER;
+query : SELECT returnedType limit? wherecriterias? saveAs?;
 
 returnedType : type | methodReturnType;
+limit : LIMIT NUMBER;
+wherecriterias: WHERE (criterias | ONE);
+saveAs : SAVEAS field;
+
 methodReturnType : objectPath;
+
+criterias : (criteria conjunction)* criteria;
+criteria : LPAREN* expression operator value RPAREN*;
+
+expression : ((ATTRIBUTE | RESULTLIST) LBRACKET QUOTE? field QUOTE? RBRACKET) | method LPAREN args? RPAREN;
+
+args : (value COMMA)* value;
+
+operator : EQUALS | DIFFERENT | LIKE;
+field : WORD;
+method : WORD;
+
+conjunction: OR | AND;
 type : WORD;
 objectPath:(WORD(DOT|DOLLAR)?)+;
 
@@ -40,6 +40,8 @@ OR:'or';
 AND:'and';
 LIMIT:'limit';
 ATTRIBUTE:'attribute';
+RESULTLIST:'resultList';
+SAVEAS: 'saveAs';
 
 //syntax
 LPAREN: '(';
@@ -55,6 +57,7 @@ DQUOTE : '\"';
 DOT:'.';
 COMMA:',';
 DOLLAR:'$';
+ONE:'1';
 ANYTHING_BUT_DQUOTE: ([^"]|'\"')+;
 
 NUMBER : [0-9]+;
