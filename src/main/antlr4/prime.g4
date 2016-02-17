@@ -30,7 +30,7 @@ methodReturnType : objectPath;
 type : WORD;
 objectPath:(WORD(DOT|DOLLAR)?)+;
 
-value : QUOTE? (WORD | NUMBER) QUOTE? ;
+value : QUOTE? (WORD | NUMBER) QUOTE? | DQUOTE ANYTHING_BUT_DQUOTE? DQUOTE ;
 
 //keywords
 SELECT:'select';
@@ -55,6 +55,7 @@ DQUOTE : '\"';
 DOT:'.';
 COMMA:',';
 DOLLAR:'$';
+ANYTHING_BUT_DQUOTE: ([^"]|'\"')+;
 
 NUMBER : [0-9]+;
 WORD: [a-zA-Z][a-zA-Z0-9]*;
