@@ -12,28 +12,28 @@ class PrimeQueryFragmentsBuilder {
         return " and " + value;
     }
 
+    public static String buildEq (final Method m, final Object value) {
+        return m.getName () + "() == " + value;
+    }
+
+    public static String buildLike (final Method m, final Object value) {
+        return m.getName () + "() ~= " + value;
+    }
+
+    public static String buildMethod (final Method m) {
+        return m.getDeclaringClass ().getName () + "." + m.getName ();
+    }
+
+    public static String buildNeq (final Method m, final Object value) {
+        return m.getName () + "() != " + value;
+    }
+
     public static String buildOrWhere (final String value) {
         return " or " + value;
     }
 
-	public static String buildResultListId (String listId) {
-		return "resultList ['" + listId + "']";
-	}
-
-	public static String buildMethod (Method m) {
-		return m.getDeclaringClass ().getName () + "." + m.getName ();
-	}
-
-	public static String buildEq (Method m, Object value) {
-		return m.getName () + "() == " + value;
-	}
-	
-	public static String buildLike (Method m, Object value) {
-		return m.getName () + "() ~= " + value;
-	}
-	
-	public static String buildNeq (Method m, Object value) {
-		return m.getName () + "() != " + value;
-	}
+    public static String buildResultListId (final String listId) {
+        return "resultList ['" + listId + "']";
+    }
 
 }

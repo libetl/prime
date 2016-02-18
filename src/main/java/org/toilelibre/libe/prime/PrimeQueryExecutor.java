@@ -54,7 +54,7 @@ class PrimeQueryExecutor {
 
     private static <T> List<T> executeQuery (final Class<T> type, final Method methodIfExists, final List<PrimeWhere> conditions, final String listId, final int limit) {
         final Object container = ReferenceRecorder.popCurrentThreadRecordedObject ();
-        if (container == null) {
+        if ( (container == null) && (listId == null)) {
             return PrimeQueryExecutor.executeDatabaseQuery (type, conditions, limit);
         } else if (listId != null) {
             return PrimeQueryExecutor.executeSourceListQuery (type, conditions, listId, limit);
@@ -69,8 +69,6 @@ class PrimeQueryExecutor {
         Class<T> returnType = null;
         if (method != null) {
             returnType = PrimeQueryExecutor.getParameterizedReturnType (method);
-        } else if (listId != null) {
-            returnType = PrimeQueryExecutor.getSourceListReturnType (listId);
         } else {
             returnType = PrimeQueryExecutor.getCorrectReturnType (typeAsString);
         }
@@ -96,6 +94,15 @@ class PrimeQueryExecutor {
         }
         return (Class<T>) pt.getRawType ();
 
+    }
+
+    @SuppressWarnings ("unchecked")
+    private static <T> Class<T> getCorrectReturnType (final String typeAsString) {
+        try {
+            return (Class<T>) Class.forName (typeAsString);
+        } catch (final ClassNotFoundException e1) {
+            return null;
+        }
     }
 
     private static int getLimitValue (final primeParser.QueryContext query) {
@@ -126,15 +133,6 @@ class PrimeQueryExecutor {
         }
     }
 
-    @SuppressWarnings ("unchecked")
-    private static <T> Class<T> getCorrectReturnType (final String typeAsString) {
-        try {
-            return (Class<T>) Class.forName (typeAsString);
-        } catch (final ClassNotFoundException e1) {
-            return null;
-        }
-    }
-
     private static <T> Class<T> getParameterizedReturnType (final Method m) {
 
         try {
@@ -147,10 +145,6 @@ class PrimeQueryExecutor {
             return null;
 
         }
-    }
-
-    private static <T> Class<T> getSourceListReturnType (String listId) {
-        return Database.getResultListClass (listId);
     }
 
     private static String getSourceListIdIfApplicable (final QueryContext query) {
