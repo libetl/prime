@@ -33,9 +33,11 @@ public class Prime<T> implements PrimeQueryWhereSelector<T>, PrimeQueryCondition
     private StringBuilder where;
     private int           limit;
     private String        listId;
+    private StringBuilder builtQueries;
 
     private Prime () {
         this.where = new StringBuilder ();
+        this.builtQueries = new StringBuilder ();
         this.limit = -1;
     }
 
@@ -47,6 +49,26 @@ public class Prime<T> implements PrimeQueryWhereSelector<T>, PrimeQueryCondition
     private Prime (final Method m) {
         this ();
         this.target = m.getDeclaringClass ().getName () + "." + m.getName ();
+    }
+
+    private Prime (final String listId) {
+        this ();
+        this.target = PrimeRequestBuilder.buildResultListId (listId);
+    }
+    
+    private Prime (final Class<T> clazz, String builtQueriesValue) {
+        this (clazz);
+        this.builtQueries = new StringBuilder (builtQueriesValue);
+    }
+
+    private Prime (final Method m, String builtQueriesValue) {
+        this (m);
+        this.builtQueries = new StringBuilder (builtQueriesValue);
+    }
+
+    private Prime (final String listId, String builtQueriesValue) {
+        this (listId);
+        this.builtQueries = new StringBuilder (builtQueriesValue);
     }
 
     @Override
@@ -64,7 +86,7 @@ public class Prime<T> implements PrimeQueryWhereSelector<T>, PrimeQueryCondition
     @Override
     @SuppressWarnings ("unchecked")
     public List<T> list () {
-        return ((List<T>) PrimeQueryExecutor.execute (PrimeRequestBuilder.build (this.target, this.where.toString (), this.limit, this.listId)));
+        return ((List<T>) PrimeQueryExecutor.execute (this.builtQueries + PrimeRequestBuilder.build (this.target, this.where.toString (), this.limit, this.listId)));
     }
 
     @Override
@@ -84,4 +106,21 @@ public class Prime<T> implements PrimeQueryWhereSelector<T>, PrimeQueryCondition
         this.where.append (matcher.getValue ());
         return this;
     }
+
+	@Override
+	public <U> PrimeQueryWhereSelector<U> andThenSelect(final Class<U> clazz) {
+		this.builtQueries.append(PrimeRequestBuilder.build (this.target, this.where.toString (), this.limit, this.listId));
+		return new Prime<U> (clazz, this.builtQueries.toString());
+	}
+
+	@Override
+	public <U> PrimeQueryWhereSelector<U> andThenSelect(final Method m) {
+		this.builtQueries.append(PrimeRequestBuilder.build (this.target, this.where.toString (), this.limit, this.listId));
+		return new Prime<U> (m, this.builtQueries.toString());
+	}
+	@Override
+	public <U> PrimeQueryWhereSelector<U> andThenSelect(final String listId) {
+		this.builtQueries.append(PrimeRequestBuilder.build (this.target, this.where.toString (), this.limit, this.listId));
+		return new Prime<U> (listId, this.builtQueries.toString());
+	}
 }

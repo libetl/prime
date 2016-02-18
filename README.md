@@ -8,11 +8,14 @@ package mypackage.test;
 
 //...
 import java.util.Arrays;
+
 //...
 import mypackage.A;
 import mypackage.D;
+
 //...
 import org.toilelibre.libe.prime.Database;
+
 //...
 import static org.toilelibre.libe.prime.Prime.select;
 import static org.toilelibre.libe.prime.Prime.$;
@@ -21,7 +24,7 @@ import static org.toilelibre.libe.prime.Matcher.eq;
 //...
 public class MyClass {
 	// ...
-	public void method() {
+	public static void main(String [] args) {
 		// New object
 		A a = new A(2, 1, Arrays.asList(new D(1), new D(2)));
 		A a2 = new A(2, 1, Arrays.asList(new D(1), new D(2)));
@@ -44,10 +47,11 @@ public class MyClass {
 		// The language allows to store a temporary list and to use it in another request
 		// This example stores in 'list1' all the database A instances where c = 5,
 		// and then query 'list1' to filter all the instances having b = 2.
-		final List<A> listOfA = Prime.<A>list ("select mypackage.A where getC () == 5 saveAs list1 ; " + 
+		list ("select mypackage.A where getC () == 5 saveAs list1 ; " + 
 		                                       "select resultList['list1'] where getB () == 2");
+		//The same query, written with a fluent interface
+		select(A.class).where(eq(vA.getB(), 5)).saveAs("list1").<A>andThenSelect("list1").where(eq(vA.getB(), 2)).list ();
 	}
 	// ...
 }
-// ...
 ```
