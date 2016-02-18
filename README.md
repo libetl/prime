@@ -24,6 +24,7 @@ public class MyClass {
 	public void method() {
 		// New object
 		A a = new A(2, 1, Arrays.asList(new D(1), new D(2)));
+		A a2 = new A(2, 1, Arrays.asList(new D(1), new D(2)));
 		// Add 'a' in global in-memory database
 		Database.store(a);
 		A vA = $(A.class); // virtual A
@@ -32,8 +33,9 @@ public class MyClass {
 		// Get any A instance in the database where b = 2 and c = 1
 		select(A.class).where(eq(vA.getB(), 2)).and(eq(vA.getC(), 1)).list();
 
-		// Get any D instance inside the a.getD () result where e = 2
-		select($(a).getD()).where(eq(vD.getE(), 2)).list();
+		// Get any D instance inside the a2.getD () result where e = 2.
+		// No need to add 'a2' in a Database, the object is a database already.
+		select($(a2).getD()).where(eq(vD.getE(), 2)).list();
 
 		// This also works with plain text queries, but hides the usage in your IDE.
 		// Can be useful for external queries.
