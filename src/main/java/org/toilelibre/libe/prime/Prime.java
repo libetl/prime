@@ -48,7 +48,7 @@ public class Prime<T> implements PrimeQueryWhereSelector<T>, PrimeQueryCondition
 
     private Prime (final Method m) {
         this ();
-        this.target = m.getDeclaringClass ().getName () + "." + m.getName ();
+        this.target =  PrimeRequestBuilder.buildMethod (m);
     }
 
     private Prime (final String listId) {

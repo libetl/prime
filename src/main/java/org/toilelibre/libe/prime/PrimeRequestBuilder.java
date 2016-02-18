@@ -1,5 +1,7 @@
 package org.toilelibre.libe.prime;
 
+import java.lang.reflect.Method;
+
 public class PrimeRequestBuilder {
 
     public static String build (final String target, final String where, final int limit, final String listId) {
@@ -14,8 +16,12 @@ public class PrimeRequestBuilder {
         return " or " + value;
     }
 
-	public static String buildResultListId(String listId) {
+	public static String buildResultListId (String listId) {
 		return "resultList ['" + listId + "']";
+	}
+
+	public static String buildMethod (Method m) {
+		return m.getDeclaringClass ().getName () + "." + m.getName ();
 	}
 
 }

@@ -7,6 +7,6 @@ public interface PrimeQueryReady<T> {
 
     List<T> list ();
     <U> PrimeQueryWhereSelector<U> andThenSelect (Class<U> clazz);
-    <U> PrimeQueryWhereSelector<U> andThenSelect(Method m);
-    <U> PrimeQueryWhereSelector<U> andThenSelect(String listId);
+    <U> PrimeQueryWhereSelector<U> andThenSelect (Method m);
+    <U> PrimeQueryWhereSelector<U> andThenSelect (String listId);
 }
