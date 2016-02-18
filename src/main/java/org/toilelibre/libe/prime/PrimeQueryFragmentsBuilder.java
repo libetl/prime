@@ -2,7 +2,7 @@ package org.toilelibre.libe.prime;
 
 import java.lang.reflect.Method;
 
-class PrimeRequestBuilder {
+class PrimeQueryFragmentsBuilder {
 
     public static String build (final String target, final String where, final int limit, final String listId) {
         return String.format ("select %s where %s limit %d saveAs %s ; ", target, where, limit, listId);
@@ -22,6 +22,18 @@ class PrimeRequestBuilder {
 
 	public static String buildMethod (Method m) {
 		return m.getDeclaringClass ().getName () + "." + m.getName ();
+	}
+
+	public static String buildEq (Method m, Object value) {
+		return m.getName () + "() == " + value;
+	}
+	
+	public static String buildLike (Method m, Object value) {
+		return m.getName () + "() ~= " + value;
+	}
+	
+	public static String buildNeq (Method m, Object value) {
+		return m.getName () + "() != " + value;
 	}
 
 }
