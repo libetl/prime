@@ -52,8 +52,8 @@ class PrimeWhereResolver {
      */
     public static List<List<PrimeWhereSubExprFinder.SubExpression>> resolve (final List<List<PrimeWhereSubExprFinder.SubExpression>> subconds, final Object candidate) {
         if (candidate == null) {
-            return Collections.singletonList (Collections
-                    .singletonList (new PrimeWhereSubExprFinder.SubExpression (0, 0, Collections.<PrimeWhere> singletonList (new PrimeWhere (null, 0, "?", "==", "false", 0)))));
+            return Collections.singletonList (Collections.singletonList (
+                    new PrimeWhereSubExprFinder.SubExpression (0, 0, Collections.<PrimeWhere> singletonList (new PrimeWhere (null, 0, "?", null, "==", "false", 0)))));
         }
 
         for (int level = subconds.size () - 1 ; level >= 0 ; level--) {
@@ -74,7 +74,7 @@ class PrimeWhereResolver {
         }
         for (int i = 0 ; i < subexpression.getExpressions ().size () ; i++) {
             if (!"?".equals (subexpression.getExpressions ().get (i).getExpression ())) {
-                subexpression.getExpressions ().set (i, new PrimeWhere (null, 0, "?", "==", "" + truth, 0));
+                subexpression.getExpressions ().set (i, new PrimeWhere (null, 0, "?", null, "==", "" + truth, 0));
             }
         }
         return truth;

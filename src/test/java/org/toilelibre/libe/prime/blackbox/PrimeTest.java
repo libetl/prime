@@ -104,6 +104,13 @@ public class PrimeTest {
             return this.e;
         }
 
+        public int getF (final int i) {
+            if (this.e == i) {
+                return 8;
+            }
+            return 0;
+        }
+
         @Override
         public int hashCode () {
             final int prime = 31;
@@ -136,6 +143,18 @@ public class PrimeTest {
     @Before
     public void clearDatabase () {
         Database.clear ();
+    }
+
+    @Test
+    public void queryParamsWithArgs () {
+        final D d1 = new D (1);
+        final D d2 = new D (2);
+        final D d3 = new D (3);
+        Database.store (d1);
+        Database.store (d2);
+        Database.store (d3);
+        final List<D> listOfD = Prime.select (D.class).where (Matcher.eq (Prime.$ (D.class).getF (2), 8)).saveAs ("list1").list ();
+        Assertions.assertThat (listOfD.toArray ()).isNotNull ().isNotEmpty ().containsOnly (d2);
     }
 
     @Test

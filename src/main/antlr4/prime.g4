@@ -20,7 +20,9 @@ criteria : LPAREN* expression operator value RPAREN*;
 
 expression : (ATTRIBUTE LBRACKET  field QUOTE? RBRACKET) | method LPAREN args? RPAREN;
 
-args : (value COMMA)* value;
+args : namedArgs | refArgs;
+namedArgs : (value COMMA)* value;
+refArgs : SAVEDARGS HASH UUID;
 
 resultListType : (RESULTLIST LBRACKET QUOTE? field QUOTE? RBRACKET);
 
@@ -46,6 +48,7 @@ LIMIT : 'limit';
 ATTRIBUTE : 'attribute';
 RESULTLIST : 'resultList';
 SAVEAS : 'saveAs';
+SAVEDARGS : 'savedArgs';
 
 //syntax
 LPAREN : '(';
@@ -63,11 +66,13 @@ COMMA : ',';
 DOLLAR : '$';
 TRUE : 'true';
 MINUS : '-';
+HASH : '#';
 
 //pure regex
 ANYTHING_BUT_DQUOTE : ([^"]|'\"')+;
 WORD : [a-zA-Z][a-zA-Z0-9_]*;
 WHITESPACE : [ \t\r\n]+ -> skip;
 DIGIT : [0-9];
+UUID : [0-9a-f]+'-'[0-9a-f]+'-'[0-9a-f]+'-'[0-9a-f]+'-'[0-9a-f]+;
 
         

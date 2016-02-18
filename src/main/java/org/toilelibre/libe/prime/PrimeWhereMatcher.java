@@ -64,6 +64,17 @@ class PrimeWhereMatcher {
             }
         }
 
+        private Method getMethodByName (final PrimeWhere condition, final Object candidateDbo) {
+            final String methodName = condition.getExpression ().indexOf ('(') != -1 ? condition.getExpression ().substring (0, condition.getExpression ().indexOf ('('))
+                    : condition.getExpression ();
+            for (final Method method : candidateDbo.getClass ().getMethods ()) {
+                if (method.getName ().equals (methodName)) {
+                    return method;
+                }
+            }
+            return null;
+        }
+
         private Object returnFieldValue (final PrimeWhere condition, final Object candidateDbo) throws NoSuchFieldException, IllegalAccessException {
             final String fieldAsString = condition.getExpression ().replaceAll (Tester.ATTRIBUTE, "$1");
             final Field field = candidateDbo.getClass ().getDeclaredField (fieldAsString);
@@ -72,9 +83,14 @@ class PrimeWhereMatcher {
         }
 
         private Object returnMethodResult (final PrimeWhere condition, final Object candidateDbo) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-            final Method m = candidateDbo.getClass ().getMethod (condition.getExpression ().indexOf ('(') != -1
-                    ? condition.getExpression ().substring (0, condition.getExpression ().indexOf ('(')) : condition.getExpression ());
+            final Method m = this.getMethodByName (condition, candidateDbo);
+            if (m == null) {
+                return null;
+            }
             m.setAccessible (true);
+            if (condition.getArgs () != null) {
+                return m.invoke (candidateDbo, condition.getArgs ());
+            }
             return m.invoke (candidateDbo);
         }
 

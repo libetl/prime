@@ -1,6 +1,7 @@
 package org.toilelibre.libe.prime;
 
 import java.lang.reflect.Method;
+import java.util.UUID;
 
 class PrimeQueryFragmentsBuilder {
 
@@ -12,20 +13,20 @@ class PrimeQueryFragmentsBuilder {
         return " and " + value;
     }
 
-    public static String buildEq (final Method m, final Object value) {
-        return m.getName () + "() == " + value;
+    public static String buildEq (final Method m, final UUID uuid, final Object value) {
+        return m.getName () + "(savedArgs#" + uuid + ") == " + value;
     }
 
-    public static String buildLike (final Method m, final Object value) {
-        return m.getName () + "() ~= " + value;
+    public static String buildLike (final Method m, final UUID uuid, final Object value) {
+        return m.getName () + "(#savedArgs#" + uuid + ") ~= " + value;
     }
 
     public static String buildMethod (final Method m) {
         return m.getDeclaringClass ().getName () + "." + m.getName ();
     }
 
-    public static String buildNeq (final Method m, final Object value) {
-        return m.getName () + "() != " + value;
+    public static String buildNeq (final Method m, final UUID uuid, final Object value) {
+        return m.getName () + "(#savedArgs#" + uuid + ") != " + value;
     }
 
     public static String buildOrWhere (final String value) {
