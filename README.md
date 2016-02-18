@@ -50,7 +50,8 @@ public class MyClass {
 		list ("select mypackage.A where getC () == 5 saveAs list1 ; " + 
 		      "select resultList['list1'] where getB () == 2");
 		//The same query, written with a fluent interface
-		select(A.class).where(eq(vA.getB(), 5)).saveAs("list1").<A>andThenSelect("list1").where(eq(vA.getB(), 2)).list ();
+		select(A.class).where(eq(vA.getB(), 5)).saveAs("list1").
+		  <A>andThenSelect("list1").where(eq(vA.getB(), 2)).list ();
 	}
 	// ...
 }
