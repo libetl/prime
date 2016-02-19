@@ -32,7 +32,7 @@ class PrimeWhereMatcher {
                     return operator;
                 }
             }
-            return null;
+            throw new PrimeException ("Unknown operator : '" + symbol1 + "'. If you think it is a real operator, please e-mail the devs of the prime lib.");
         }
 
         private final String symbol;
@@ -60,7 +60,7 @@ class PrimeWhereMatcher {
                 }
                 return this.returnMethodResult (condition, candidateDbo);
             } catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-                return null;
+                throw new PrimeException ("While checking the parameter value for a candidate, an exception was found", e);
             }
         }
 
@@ -72,7 +72,7 @@ class PrimeWhereMatcher {
                     return method;
                 }
             }
-            return null;
+            throw new PrimeException ("Problem with the method '" + methodName + "'. Please check that it is not virtual and that it is accessible.");
         }
 
         private Object returnFieldValue (final PrimeWhere condition, final Object candidateDbo) throws NoSuchFieldException, IllegalAccessException {
@@ -84,9 +84,7 @@ class PrimeWhereMatcher {
 
         private Object returnMethodResult (final PrimeWhere condition, final Object candidateDbo) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
             final Method m = this.getMethod (condition, candidateDbo);
-            if (m == null) {
-                return null;
-            }
+
             m.setAccessible (true);
             if (condition.getArgs () != null) {
                 return m.invoke (candidateDbo, condition.getArgs ());

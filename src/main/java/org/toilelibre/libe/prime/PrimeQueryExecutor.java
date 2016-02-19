@@ -71,9 +71,9 @@ class PrimeQueryExecutor {
         final Method method = PrimeQueryExecutor.getMethodIfApplicable (typeAsString);
         final String listId = PrimeQueryExecutor.getSourceListIdIfApplicable (query);
         Class<T> returnType = null;
-        if (method != null) {
+        if (method != null && listId == null) {
             returnType = PrimeQueryExecutor.getParameterizedReturnType (method);
-        } else {
+        } else if (listId == null) {
             returnType = PrimeQueryExecutor.getCorrectReturnType (typeAsString);
         }
 
@@ -101,11 +101,11 @@ class PrimeQueryExecutor {
     }
 
     @SuppressWarnings ("unchecked")
-    private static <T> Class<T> getCorrectReturnType (final String typeAsString) {
+    private static <T> Class<T> getCorrectReturnType (final String typeAsString) throws PrimeException {
         try {
             return (Class<T>) Class.forName (typeAsString);
         } catch (final ClassNotFoundException e1) {
-            return null;
+            throw new PrimeException ("Could not find the specified return type : " + typeAsString, e1);
         }
     }
 
@@ -118,8 +118,10 @@ class PrimeQueryExecutor {
         try {
             return Class.forName (typeAsString.indexOf ('.') == -1 ? typeAsString : typeAsString.substring (0, typeAsString.lastIndexOf ('.')))
                     .getMethod (typeAsString.substring (typeAsString.lastIndexOf ('.') + 1));
-        } catch (NoSuchMethodException | SecurityException | ClassNotFoundException e) {
+        } catch (ClassNotFoundException e) {
             return null;
+        } catch (NoSuchMethodException | SecurityException e1) {
+            throw new PrimeException ("Could not find the specified method inside the type : " + typeAsString, e1);
         }
     }
 
@@ -132,8 +134,8 @@ class PrimeQueryExecutor {
                 return (Collection<T>) ((Map<?, ?>) o).values ();
             }
             return (Collection<T>) o;
-        } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-            return null;
+        } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e1) {
+            throw new PrimeException ("Could not find the target object where to search : " + container + ", method " + method, e1);
         }
     }
 
@@ -145,9 +147,8 @@ class PrimeQueryExecutor {
                 return PrimeQueryExecutor.findReturnTypeForParameterizedType ((ParameterizedType) type);
             }
             return null;
-        } catch (final SecurityException e) {
-            return null;
-
+        } catch (final SecurityException e1) {
+            throw new PrimeException ("Could not find the collection parameterized type for method : " + m, e1);
         }
     }
 
@@ -183,13 +184,21 @@ class PrimeQueryExecutor {
 
     private static Object [] popArgs (final ArgsContext args) {
         if ( (args != null) && (args.refArgs () != null)) {
-            return ArgsStorage.popArgs (UUID.fromString (args.refArgs ().UUID ().getText ()));
+            Object [] result = ArgsStorage.popArgs (UUID.fromString (args.refArgs ().UUID ().getText ()));
+            if (result == null) {
+                throw new PrimeException ("Invalid use of savedArgs : please check that the select builder is called instead of a plain text query");
+            }
+            return result;
         }
         return null;
     }
     private static Class<?> [] popParamTypes (final ArgsContext args) {
         if ( (args != null) && (args.refArgs () != null)) {
-            return ArgsStorage.popParamTypes (UUID.fromString (args.refArgs ().UUID ().getText ()));
+            Class<?> [] result = ArgsStorage.popParamTypes (UUID.fromString (args.refArgs ().UUID ().getText ()));
+            if (result == null) {
+                throw new PrimeException ("Invalid use of savedArgs : please check that the select builder is called instead of a plain text query");
+            }
+            return result;
         }
         return null;
     }

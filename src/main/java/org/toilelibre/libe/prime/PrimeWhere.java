@@ -2,6 +2,11 @@ package org.toilelibre.libe.prime;
 
 class PrimeWhere implements Cloneable {
 
+    static PrimeWhere TRUE_AND = new PrimeWhere ("and", 0, "?", null, null, "==", "true", 0);
+    static PrimeWhere FALSE_AND = new PrimeWhere ("and", 0, "?", null, null, "==", "false", 0);
+    static PrimeWhere TRUE_OR = new PrimeWhere ("or", 0, "?", null, null, "==", "true", 0);
+    static PrimeWhere FALSE_OR = new PrimeWhere ("or", 0, "?", null, null, "==", "false", 0);
+    
     private final String    conjunction;
     private final int       openedParentheses;
     private final String    expression;

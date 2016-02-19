@@ -64,7 +64,7 @@ class PrimeWhereSubExprFinder {
      */
     public static List<List<SubExpression>> findSubConditions (final List<PrimeWhere> conditions) {
         if ( (conditions == null) || !PrimeWhereSubExprFinder.pairingIsOk (conditions)) {
-            throw new IllegalArgumentException ("Invalid conditions passed in parameters");
+            throw new PrimeException ("Invalid conditions passed in parameters, please check the pairing of the nested criterias.");
         }
         final ArrayList<PrimeWhere> conditions2 = new ArrayList<PrimeWhere> (conditions.size ());
         for (final PrimeWhere condition : conditions) {
