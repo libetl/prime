@@ -64,7 +64,7 @@ class PrimeWhereMatcher {
             }
         }
 
-        private Method getMethodByName (final PrimeWhere condition, final Object candidateDbo) {
+        private Method getMethod (final PrimeWhere condition, final Object candidateDbo) {
             final String methodName = condition.getExpression ().indexOf ('(') != -1 ? condition.getExpression ().substring (0, condition.getExpression ().indexOf ('('))
                     : condition.getExpression ();
             for (final Method method : candidateDbo.getClass ().getMethods ()) {
@@ -83,7 +83,7 @@ class PrimeWhereMatcher {
         }
 
         private Object returnMethodResult (final PrimeWhere condition, final Object candidateDbo) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-            final Method m = this.getMethodByName (condition, candidateDbo);
+            final Method m = this.getMethod (condition, candidateDbo);
             if (m == null) {
                 return null;
             }

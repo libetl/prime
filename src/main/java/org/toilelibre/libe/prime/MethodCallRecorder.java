@@ -23,7 +23,7 @@ class MethodCallRecorder {
         MethodCallRecorder.lastMethod.set (m);
     }
 
-    public static void recordCallArgs (final Object [] args) {
+    public static void recordCallArgs (final Class<?> [] paramTypes, final Object [] args) {
         MethodCallRecorder.lastMethodArgs.set (args);
     }
 

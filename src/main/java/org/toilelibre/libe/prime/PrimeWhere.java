@@ -6,16 +6,18 @@ class PrimeWhere implements Cloneable {
     private final int       openedParentheses;
     private final String    expression;
     private final Object [] args;
+	private final Class<?>[] paramTypes;
     private final String    operator;
     private final String    value;
     private final int       closedParentheses;
 
-    public PrimeWhere (final String conjunction, final int openedParentheses, final String expression, final Object [] args, final String operator, final String value,
+    public PrimeWhere (final String conjunction, final int openedParentheses, final String expression, final Class<?> [] paramTypes, final Object [] args, final String operator, final String value,
             final int closedParentheses) {
         super ();
         this.conjunction = conjunction;
         this.openedParentheses = openedParentheses;
         this.expression = expression;
+        this.paramTypes = paramTypes;
         this.args = args;
         this.operator = operator;
         this.value = value;
@@ -54,5 +56,9 @@ class PrimeWhere implements Cloneable {
     public String getValue () {
         return this.value;
     }
+
+	public Class<?>[] getParamTypes() {
+		return paramTypes;
+	}
 
 }

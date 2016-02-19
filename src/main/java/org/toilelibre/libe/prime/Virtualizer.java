@@ -36,7 +36,7 @@ class Virtualizer {
             @Override
             public Object intercept (final Object obj, final Method method, final Object [] args, final MethodProxy proxy) throws Throwable {
                 MethodCallRecorder.recordCall (method);
-                MethodCallRecorder.recordCallArgs (args);
+                MethodCallRecorder.recordCallArgs (method.getParameterTypes(), args);
                 return DefaultResponseBuilder.getDefaultResponseForType (method.getReturnType ());
             }
         });

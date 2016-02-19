@@ -7,19 +7,19 @@ public class Matcher {
 
     public static Matcher eq (final Object o, final Object value) {
         final Method m = MethodCallRecorder.popCurrentThreadRecordedCall ();
-        final UUID uuid = ArgsStorage.storeArgs (MethodCallRecorder.popCurrentThreadRecordedCallArgs ());
+        final UUID uuid = ArgsStorage.storeArgs (m.getParameterTypes(), MethodCallRecorder.popCurrentThreadRecordedCallArgs ());
         return new Matcher (PrimeQueryFragmentsBuilder.buildEq (m, uuid, value));
     }
 
     public static Matcher like (final Object o, final Object value) {
         final Method m = MethodCallRecorder.popCurrentThreadRecordedCall ();
-        final UUID uuid = ArgsStorage.storeArgs (MethodCallRecorder.popCurrentThreadRecordedCallArgs ());
+        final UUID uuid = ArgsStorage.storeArgs (m.getParameterTypes(), MethodCallRecorder.popCurrentThreadRecordedCallArgs ());
         return new Matcher (PrimeQueryFragmentsBuilder.buildLike (m, uuid, value));
     }
 
     public static Matcher neq (final Object o, final Object value) {
         final Method m = MethodCallRecorder.popCurrentThreadRecordedCall ();
-        final UUID uuid = ArgsStorage.storeArgs (MethodCallRecorder.popCurrentThreadRecordedCallArgs ());
+        final UUID uuid = ArgsStorage.storeArgs (m.getParameterTypes(), MethodCallRecorder.popCurrentThreadRecordedCallArgs ());
         return new Matcher (PrimeQueryFragmentsBuilder.buildNeq (m, uuid, value));
     }
 
