@@ -1,5 +1,7 @@
 package org.toilelibre.libe.prime;
 
+import groovy.util.Eval;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -10,13 +12,13 @@ class PrimeWhereMatcher {
         EQUALS ("==", new Tester () {
             @Override
             public boolean test (final PrimeWhere condition, final Object candidateDbo) {
-                return ("" + this.getCandidateValue (condition, candidateDbo)).equals (condition.getValue ());
+                return  (boolean) Eval.x(this.getCandidateValue (condition, candidateDbo), "x.equals (" + condition.getValue () + ")");
             }
         }), DIFFERENT ("!=", new Tester () {
 
             @Override
             public boolean test (final PrimeWhere condition, final Object candidateDbo) {
-                return ! ("" + this.getCandidateValue (condition, candidateDbo)).equals (condition.getValue ());
+                return  (boolean) Eval.x(this.getCandidateValue (condition, candidateDbo), "!x.equals (" + condition.getValue () + ")");
             }
         }), LIKE ("~=", new Tester () {
 
@@ -74,12 +76,7 @@ class PrimeWhereMatcher {
                     throw new PrimeException ("Problem with the method '" + methodName + "'. Please check the syntax in your call.");
                 }
             }
-            for (final Method method : candidateDbo.getClass ().getMethods ()) {
-                if (method.getName ().equals (methodName)) {
-                    return method;
-                }
-            }
-            throw new PrimeException ("Problem with the method '" + methodName + "'. Please check that it is not virtual and that it is accessible.");
+            return null;
         }
 
         private Object returnFieldValue (final PrimeWhere condition, final Object candidateDbo) throws NoSuchFieldException, IllegalAccessException {
@@ -92,11 +89,12 @@ class PrimeWhereMatcher {
         private Object returnMethodResult (final PrimeWhere condition, final Object candidateDbo) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
             final Method m = this.getMethod (condition, candidateDbo);
 
-            m.setAccessible (true);
-            if (condition.getArgs () != null) {
+            if (m != null && condition.getArgs () != null) {
+                m.setAccessible (true);
                 return m.invoke (candidateDbo, condition.getArgs ());
             }
-            return m.invoke (candidateDbo);
+            //the more we avoid to go inside the groovy layer, the faster it is
+            return Eval.x (candidateDbo, "x." + condition.getExpression ());
         }
 
         abstract boolean test (PrimeWhere condition, Object candidateDbo);
