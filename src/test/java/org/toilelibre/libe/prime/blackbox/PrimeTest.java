@@ -196,4 +196,15 @@ public class PrimeTest {
         Assertions.assertThat (listOfA2.toArray ()).isNotNull ().isNotEmpty ().containsOnly (listOfA1.toArray ());
     }
 
+    @Test
+    public void withParentheses () {
+        final A a1 = new A (1, 5, Arrays.asList (new D (7), new D (8)));
+        final A a2 = new A (2, 5, Arrays.asList (new D (8), new D (9)));
+        final A a3 = new A (3, 5, Arrays.asList (new D (9), new D (10)));
+        Database.store (a1);
+        Database.store (a2);
+        Database.store (a3);
+        final List<A> listOfA1 = Prime.select (A.class).where (Matcher.eq (Prime.$ (A.class).getC (), 5)).and (Matcher.eq (Prime.$ (A.class).getB (), 2).orEq (Prime.$ (A.class).getB (), 3)).list ();
+        Assertions.assertThat (listOfA1.toArray ()).isNotNull ().isNotEmpty ().containsOnly (a2, a3);
+    }
 }

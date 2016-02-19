@@ -32,4 +32,40 @@ public class Matcher {
     String getValue () {
         return this.value;
     }
+    
+    public Matcher orEq (final Object o, final Object value) {
+        final Method m = MethodCallRecorder.popCurrentThreadRecordedCall ();
+        final UUID uuid = ArgsStorage.storeArgs (m.getParameterTypes(), MethodCallRecorder.popCurrentThreadRecordedCallArgs ());
+        return new Matcher (this.value + PrimeQueryFragmentsBuilder.buildOrWhere (PrimeQueryFragmentsBuilder.buildEq (m, uuid, value)));
+    }
+
+    public Matcher orLike (final Object o, final Object value) {
+        final Method m = MethodCallRecorder.popCurrentThreadRecordedCall ();
+        final UUID uuid = ArgsStorage.storeArgs (m.getParameterTypes(), MethodCallRecorder.popCurrentThreadRecordedCallArgs ());
+        return new Matcher (this.value + PrimeQueryFragmentsBuilder.buildOrWhere (PrimeQueryFragmentsBuilder.buildLike (m, uuid, value)));
+    }
+
+    public Matcher orNeq (final Object o, final Object value) {
+        final Method m = MethodCallRecorder.popCurrentThreadRecordedCall ();
+        final UUID uuid = ArgsStorage.storeArgs (m.getParameterTypes(), MethodCallRecorder.popCurrentThreadRecordedCallArgs ());
+        return new Matcher (this.value + PrimeQueryFragmentsBuilder.buildOrWhere (PrimeQueryFragmentsBuilder.buildNeq (m, uuid, value)));
+    }
+    
+    public Matcher andEq (final Object o, final Object value) {
+        final Method m = MethodCallRecorder.popCurrentThreadRecordedCall ();
+        final UUID uuid = ArgsStorage.storeArgs (m.getParameterTypes(), MethodCallRecorder.popCurrentThreadRecordedCallArgs ());
+        return new Matcher (this.value + PrimeQueryFragmentsBuilder.buildAndWhere (PrimeQueryFragmentsBuilder.buildEq (m, uuid, value)));
+    }
+
+    public Matcher andLike (final Object o, final Object value) {
+        final Method m = MethodCallRecorder.popCurrentThreadRecordedCall ();
+        final UUID uuid = ArgsStorage.storeArgs (m.getParameterTypes(), MethodCallRecorder.popCurrentThreadRecordedCallArgs ());
+        return new Matcher (this.value + PrimeQueryFragmentsBuilder.buildAndWhere (PrimeQueryFragmentsBuilder.buildLike (m, uuid, value)));
+    }
+
+    public Matcher andNeq (final Object o, final Object value) {
+        final Method m = MethodCallRecorder.popCurrentThreadRecordedCall ();
+        final UUID uuid = ArgsStorage.storeArgs (m.getParameterTypes(), MethodCallRecorder.popCurrentThreadRecordedCallArgs ());
+        return new Matcher (this.value + PrimeQueryFragmentsBuilder.buildAndWhere (PrimeQueryFragmentsBuilder.buildNeq (m, uuid, value)));
+    }
 }

@@ -121,7 +121,7 @@ public class Prime<T> implements PrimeQueryWhereSelector<T>, PrimeQueryCondition
 
     @Override
     public PrimeQueryConditionSelector<T> where (final Matcher matcher) {
-        this.where.append (matcher.getValue ());
+        this.where.append (PrimeQueryFragmentsBuilder.buildFirstWhere (matcher.getValue ()));
         return this;
     }
 }
