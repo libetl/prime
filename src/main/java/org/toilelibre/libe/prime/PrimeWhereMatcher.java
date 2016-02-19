@@ -67,6 +67,13 @@ class PrimeWhereMatcher {
         private Method getMethod (final PrimeWhere condition, final Object candidateDbo) {
             final String methodName = condition.getExpression ().indexOf ('(') != -1 ? condition.getExpression ().substring (0, condition.getExpression ().indexOf ('('))
                     : condition.getExpression ();
+            if (condition.getParamTypes () != null) {
+                try {
+                    return candidateDbo.getClass ().getDeclaredMethod (methodName, condition.getParamTypes ());
+                } catch (NoSuchMethodException | SecurityException e) {
+                    throw new PrimeException ("Problem with the method '" + methodName + "'. Please check the syntax in your call.");
+                }
+            }
             for (final Method method : candidateDbo.getClass ().getMethods ()) {
                 if (method.getName ().equals (methodName)) {
                     return method;
