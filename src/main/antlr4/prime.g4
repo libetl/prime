@@ -26,12 +26,13 @@ refArgs : SAVEDARGS HASH UUID;
 
 resultListType : (RESULTLIST LBRACKET QUOTE? field QUOTE? RBRACKET);
 
-// non hierarchical nodes
 limit : LIMIT integer;
+value : (QUOTE? (WORD | number) QUOTE?) | (DQUOTE ANYTHING_BUT_DQUOTE? DQUOTE);
+
+// non hierarchical nodes
 operator : EQUALS | DIFFERENT | LIKE;
 objectPath : (WORD (DOT | DOLLAR)?)+;
 conjunction : OR | AND;
-value : (QUOTE? (WORD | number) QUOTE?) | (DQUOTE ANYTHING_BUT_DQUOTE? DQUOTE);
 field : WORD;
 method : WORD;
 type : WORD;
