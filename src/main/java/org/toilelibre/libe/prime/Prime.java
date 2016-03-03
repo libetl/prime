@@ -37,6 +37,10 @@ public class Prime<T> implements PrimeQueryWhereSelector<T>, PrimeQueryCondition
         final Method m = MethodCallRecorder.popCurrentThreadRecordedCall ();
         return new Prime<T> (m);
     }
+    
+    public static <T> Prime<T> select (final String listId) {
+        return new Prime<T> (listId);
+    }
 
     private String        target;
     private StringBuilder where;
