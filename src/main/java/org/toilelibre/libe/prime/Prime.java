@@ -1,10 +1,15 @@
 package org.toilelibre.libe.prime;
 
 import java.lang.reflect.Method;
-import java.util.List;
+import java.util.Set;
 
 public class Prime<T> implements PrimeQueryWhereSelector<T>, PrimeQueryConditionSelector<T>, PrimeQueryReady<T> {
 
+	static {
+		//force Database clinit here to trigger the importNow method
+		new Database ();
+	}
+	
     public static <T> T $ (final Class<T> templateClass) {
         return Virtualizer.virtualize (templateClass);
     }
@@ -16,8 +21,8 @@ public class Prime<T> implements PrimeQueryWhereSelector<T>, PrimeQueryCondition
     }
 
     @SuppressWarnings ("unchecked")
-    public static <T> List<T> list (final String request) {
-        return ((List<T>) PrimeQueryExecutor.execute (request));
+    public static <T> Set<T> result (final String request) {
+        return ((Set<T>) PrimeQueryExecutor.execute (request));
     }
 
     public static <T> PrimeQueryWhereSelector<T> select (final Class<T> clazz) {
@@ -103,8 +108,8 @@ public class Prime<T> implements PrimeQueryWhereSelector<T>, PrimeQueryCondition
 
     @Override
     @SuppressWarnings ("unchecked")
-    public List<T> list () {
-        return ((List<T>) PrimeQueryExecutor.execute (this.builtQueries + PrimeQueryFragmentsBuilder.build (this.target, this.where.toString (), this.limit, this.listId)));
+    public Set<T> result () {
+        return ((Set<T>) PrimeQueryExecutor.execute (this.builtQueries + PrimeQueryFragmentsBuilder.build (this.target, this.where.toString (), this.limit, this.listId)));
     }
 
     @Override

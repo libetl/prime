@@ -1,7 +1,9 @@
 package org.toilelibre.libe.prime.blackbox;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 import org.fest.assertions.Assertions;
 import org.junit.Before;
@@ -12,8 +14,12 @@ import org.toilelibre.libe.prime.Prime;
 
 public class PrimeTest {
 
-    static class A {
-        private final int     b;
+    static class A implements Serializable {
+        /**
+		 * 
+		 */
+		private static final long serialVersionUID = -1651950806415683682L;
+		private final int     b;
         private final int     c;
         private final List<D> d;
 
@@ -75,8 +81,12 @@ public class PrimeTest {
 
     }
 
-    static class D {
-        private final int e;
+    static class D implements Serializable {
+        /**
+		 * 
+		 */
+		private static final long serialVersionUID = -4701321548778747085L;
+		private final int e;
 
         public D (final int e) {
             this.e = e;
@@ -129,15 +139,15 @@ public class PrimeTest {
         Database.store (a);
         Database.store (a2);
         Database.store (a3);
-        final List<A> listOfA = Prime.select (A.class).where (Matcher.eq (Prime.$ (A.class).getB (), 2)).and (Matcher.eq (Prime.$ (A.class).getC (), 1)).list ();
-        final List<D> listOfD = Prime.<D> select (Prime.$ (a).getD ()).where (Matcher.eq (Prime.$ (D.class).getE (), 2)).list ();
-        final List<A> someA = Prime.<A> list ("select " + A.class.getName () + " where attribute[c] != 3");
+        final Set<A> resultSetOfA = Prime.select (A.class).where (Matcher.eq (Prime.$ (A.class).getB (), 2)).and (Matcher.eq (Prime.$ (A.class).getC (), 1)).result ();
+        final Set<D> resultSetOfD = Prime.<D> select (Prime.$ (a).getD ()).where (Matcher.eq (Prime.$ (D.class).getE (), 2)).result ();
+        final Set<A> someA = Prime.<A> result ("select " + A.class.getName () + " where attribute[c] != 3");
         Database.remove (a);
-        final List<A> listOfAEmpty = Prime.select (A.class).where (Matcher.eq (Prime.$ (A.class).getB (), 2)).and (Matcher.eq (Prime.$ (A.class).getC (), 1)).list ();
-        Assertions.assertThat (listOfA).containsExactly (a);
-        Assertions.assertThat (listOfD).containsExactly (new D (2));
-        Assertions.assertThat (someA).containsExactly (a, a3);
-        Assertions.assertThat (listOfAEmpty).isEmpty ();
+        final Set<A> resultSetOfAEmpty = Prime.select (A.class).where (Matcher.eq (Prime.$ (A.class).getB (), 2)).and (Matcher.eq (Prime.$ (A.class).getC (), 1)).result ();
+        Assertions.assertThat (resultSetOfA).containsOnly (a);
+        Assertions.assertThat (resultSetOfD).containsOnly (new D (2));
+        Assertions.assertThat (someA).containsOnly (a, a3);
+        Assertions.assertThat (resultSetOfAEmpty).isEmpty ();
     }
 
     @Before
@@ -153,8 +163,8 @@ public class PrimeTest {
         Database.store (d1);
         Database.store (d2);
         Database.store (d3);
-        final List<D> listOfD = Prime.select (D.class).where (Matcher.eq (Prime.$ (D.class).getF (2), 8)).saveAs ("list1").list ();
-        Assertions.assertThat (listOfD.toArray ()).isNotNull ().isNotEmpty ().containsOnly (d2);
+        final Set<D> resultSetOfD = Prime.select (D.class).where (Matcher.eq (Prime.$ (D.class).getF (2), 8)).saveAs ("resultSet1").result ();
+        Assertions.assertThat (resultSetOfD.toArray ()).isNotNull ().isNotEmpty ().containsOnly (d2);
     }
 
     @Test
@@ -165,9 +175,8 @@ public class PrimeTest {
         Database.store (a1);
         Database.store (a2);
         Database.store (a3);
-        final List<A> listOfA = Prime
-                .<A> list ("select org.toilelibre.libe.prime.blackbox.PrimeTest$A where getC () == 5 saveAs list1 ; select resultList['list1'] where getB () == 2");
-        Assertions.assertThat (listOfA.toArray ()).isNotNull ().isNotEmpty ().containsOnly (a2);
+        final Set<A> resultSetOfA = Prime.<A> result ("select org.toilelibre.libe.prime.blackbox.PrimeTest$A where getC () == 5 saveAs resultSet1 ; select resultList['resultSet1'] where getB () == 2");
+        Assertions.assertThat (resultSetOfA.toArray ()).isNotNull ().isNotEmpty ().containsOnly (a2);
     }
 
     @Test
@@ -178,9 +187,9 @@ public class PrimeTest {
         Database.store (a1);
         Database.store (a2);
         Database.store (a3);
-        final List<A> listOfA = Prime.select (A.class).where (Matcher.eq (Prime.$ (A.class).getC (), 5)).saveAs ("list1").<A> andThenSelect ("list1")
-                .where (Matcher.eq (Prime.$ (A.class).getB (), 2)).list ();
-        Assertions.assertThat (listOfA.toArray ()).isNotNull ().isNotEmpty ().containsOnly (a2);
+        final Set<A> resultSetOfA = Prime.select (A.class).where (Matcher.eq (Prime.$ (A.class).getC (), 5)).saveAs ("resultSet1").<A> andThenSelect ("resultSet1")
+                .where (Matcher.eq (Prime.$ (A.class).getB (), 2)).result ();
+        Assertions.assertThat (resultSetOfA.toArray ()).isNotNull ().isNotEmpty ().containsOnly (a2);
     }
 
     @Test
@@ -191,9 +200,9 @@ public class PrimeTest {
         Database.store (a1);
         Database.store (a2);
         Database.store (a3);
-        final List<A> listOfA1 = Prime.select (A.class).where (Matcher.eq (Prime.$ (A.class).getC (), 5)).saveAs ("list1").list ();
-        final List<A> listOfA2 = Database.getResultList ("list1");
-        Assertions.assertThat (listOfA2.toArray ()).isNotNull ().isNotEmpty ().containsOnly (listOfA1.toArray ());
+        final Set<A> resultSetOfA1 = Prime.select (A.class).where (Matcher.eq (Prime.$ (A.class).getC (), 5)).saveAs ("resultSet1").result ();
+        final Set<A> resultSetOfA2 = Database.getResultSet ("resultSet1");
+        Assertions.assertThat (resultSetOfA2.toArray ()).isNotNull ().isNotEmpty ().containsOnly (resultSetOfA1.toArray ());
     }
 
     @Test
@@ -204,7 +213,7 @@ public class PrimeTest {
         Database.store (a1);
         Database.store (a2);
         Database.store (a3);
-        final List<A> listOfA1 = Prime.select (A.class).where (Matcher.eq (Prime.$ (A.class).getC (), 5)).and (Matcher.eq (Prime.$ (A.class).getB (), 2).orEq (Prime.$ (A.class).getB (), 3)).list ();
-        Assertions.assertThat (listOfA1.toArray ()).isNotNull ().isNotEmpty ().containsOnly (a2, a3);
+        final Set<A> resultSetOfA1 = Prime.select (A.class).where (Matcher.eq (Prime.$ (A.class).getC (), 5)).and (Matcher.eq (Prime.$ (A.class).getB (), 2).orEq (Prime.$ (A.class).getB (), 3)).result ();
+        Assertions.assertThat (resultSetOfA1.toArray ()).isNotNull ().isNotEmpty ().containsOnly (a2, a3);
     }
 }

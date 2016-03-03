@@ -1,7 +1,7 @@
 package org.toilelibre.libe.prime;
 
 import java.lang.reflect.Method;
-import java.util.List;
+import java.util.Set;
 
 public interface PrimeQueryReady<T> {
 
@@ -11,5 +11,5 @@ public interface PrimeQueryReady<T> {
 
     <U> PrimeQueryWhereSelector<U> andThenSelect (String listId);
 
-    List<T> list ();
+    Set<T> result ();
 }

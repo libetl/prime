@@ -7,10 +7,12 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 import org.antlr.v4.runtime.ANTLRInputStream;
@@ -36,10 +38,10 @@ class PrimeQueryExecutor {
         return conditions;
     }
 
-    public static <T> List<T> execute (final String request) {
+    public static <T> Set<T> execute (final String request) {
         final primeParser parser = new primeParser (new CommonTokenStream (new primeLexer (new ANTLRInputStream (request))));
 
-        List<T> result = null;
+        Set<T> result = null;
         for (final primeParser.CommandContext command : parser.primerequest ().command ()) {
             if (!command.query ().isEmpty ()) {
                 result = PrimeQueryExecutor.executeQuery (command.query ());
@@ -48,15 +50,15 @@ class PrimeQueryExecutor {
         return result;
     }
 
-    private static <T> List<T> executeDatabaseQuery (final Class<T> type, final List<PrimeWhere> conditions, final int limit) {
+    private static <T> Set<T> executeDatabaseQuery (final Class<T> type, final List<PrimeWhere> conditions, final int limit) {
         return PrimeQueryExecutor.launchQuery (type, conditions, null, null, null, limit);
     }
 
-    private static <T> List<T> executeObjectQuery (final Object container, final Method method, final Class<T> type, final List<PrimeWhere> conditions, final int limit) {
+    private static <T> Set<T> executeObjectQuery (final Object container, final Method method, final Class<T> type, final List<PrimeWhere> conditions, final int limit) {
         return PrimeQueryExecutor.launchQuery (type, conditions, container, method, null, limit);
     }
 
-    private static <T> List<T> executeQuery (final Class<T> type, final Method methodIfExists, final List<PrimeWhere> conditions, final String listId, final int limit) {
+    private static <T> Set<T> executeQuery (final Class<T> type, final Method methodIfExists, final List<PrimeWhere> conditions, final String listId, final int limit) {
         final Object container = ReferenceRecorder.popCurrentThreadRecordedObject ();
         if ( (container == null) && (listId == null)) {
             return PrimeQueryExecutor.executeDatabaseQuery (type, conditions, limit);
@@ -66,7 +68,7 @@ class PrimeQueryExecutor {
         return PrimeQueryExecutor.executeObjectQuery (container, methodIfExists, type, conditions, limit);
     }
 
-    private static <T> List<T> executeQuery (final primeParser.QueryContext query) {
+    private static <T> Set<T> executeQuery (final primeParser.QueryContext query) {
         final String typeAsString = query.returnedType ().getText ();
         final Method method = PrimeQueryExecutor.getMethodIfApplicable (typeAsString);
         final String listId = PrimeQueryExecutor.getSourceListIdIfApplicable (query);
@@ -79,12 +81,12 @@ class PrimeQueryExecutor {
 
         final List<PrimeWhere> conditions = PrimeQueryExecutor.buildConditionsList (query);
         final int limit = PrimeQueryExecutor.getLimitValue (query);
-        final List<T> result = PrimeQueryExecutor.executeQuery (returnType, method, conditions, listId, limit);
-        PrimeQueryExecutor.storeSaveAsResultList (query, returnType, result);
+        final Set<T> result = PrimeQueryExecutor.executeQuery (returnType, method, conditions, listId, limit);
+        PrimeQueryExecutor.storeSaveAsResultSet (query, returnType, result);
         return result;
     }
 
-    private static <T> List<T> executeSourceListQuery (final Class<T> type, final List<PrimeWhere> conditions, final String listId, final int limit) {
+    private static <T> Set<T> executeSourceListQuery (final Class<T> type, final List<PrimeWhere> conditions, final String listId, final int limit) {
         return PrimeQueryExecutor.launchQuery (type, conditions, null, null, listId, limit);
     }
 
@@ -159,16 +161,16 @@ class PrimeQueryExecutor {
     @SuppressWarnings ("unchecked")
     private static <T> Collection<T> getTargetCollection (final Class<T> type, final Object container, final Method method, final String sourceListId) {
         return (Collection<T>) ( (container != null) && (method != null) ? PrimeQueryExecutor.getObjectTargetCollection (container, method)
-                : sourceListId != null ? Database.getResultList (sourceListId) : Database.listType (type));
+                : sourceListId != null ? Database.getResultSet (sourceListId) : Database.fetchType (type));
     }
 
-    private static <T> List<T> launchQuery (final Class<T> type, final List<PrimeWhere> conditions, final Object container, final Method method, final String sourceListId,
+    private static <T> Set<T> launchQuery (final Class<T> type, final List<PrimeWhere> conditions, final Object container, final Method method, final String sourceListId,
             final int limit) {
         final List<List<SubExpression>> subExprs = PrimeWhereSubExprFinder.findSubConditions (conditions);
         final List<PrimeWhere> savedWhereList = new LinkedList<PrimeWhere> (subExprs.get (0).get (0).getExpressions ());
 
         final Collection<T> collection = PrimeQueryExecutor.getTargetCollection (type, container, method, sourceListId);
-        final List<T> result = new ArrayList<T> ();
+        final Set<T> result = new HashSet<T> ();
         final Iterator<T> iterator = collection.iterator ();
         int added = 0;
         while (iterator.hasNext () && ( (added < limit) || (limit < 0))) {
@@ -209,9 +211,9 @@ class PrimeQueryExecutor {
         }
     }
 
-    private static <T> void storeSaveAsResultList (final QueryContext query, final Class<T> resultListClass, final List<T> resultList) {
+    private static <T> void storeSaveAsResultSet (final QueryContext query, final Class<T> resultListClass, final Set<T> resultList) {
         if ( (query.saveAs () != null) && !"null".equals (query.saveAs ().field ().getText ())) {
-            Database.saveResultList (query.saveAs ().field ().getText (), resultListClass, resultList);
+            Database.saveResultSet (query.saveAs ().field ().getText (), resultListClass, resultList);
         }
     }
 }
