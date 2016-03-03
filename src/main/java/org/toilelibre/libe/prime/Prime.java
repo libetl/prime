@@ -38,8 +38,8 @@ public class Prime<T> implements PrimeQueryWhereSelector<T>, PrimeQueryCondition
         return new Prime<T> (m);
     }
     
-    public static <T> Prime<T> select (final String listId) {
-        return new Prime<T> (listId);
+    public static <T> Prime<T> select (final String listId1) {
+        return new Prime<T> (listId1);
     }
 
     private String        target;
