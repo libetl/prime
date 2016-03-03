@@ -19,7 +19,7 @@ import org.toilelibre.libe.prime.Database;
 //...
 import static org.toilelibre.libe.prime.Prime.select;
 import static org.toilelibre.libe.prime.Prime.$;
-import static org.toilelibre.libe.prime.Prime.list;
+import static org.toilelibre.libe.prime.Prime.result;
 import static org.toilelibre.libe.prime.Matcher.eq;
 //...
 public class MyClass {
