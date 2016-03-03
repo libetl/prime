@@ -29,16 +29,16 @@ public class Prime<T> implements PrimeQueryWhereSelector<T>, PrimeQueryCondition
         return new Prime<T> (clazz);
     }
     
-    public static <T> Prime<T> select (final Method m) {
+    public static <T> PrimeQueryWhereSelector<T> select (final Method m) {
         return new Prime<T> (m);
     }
 
-    public static <T> Prime<T> select (final Object o) {
+    public static <T> PrimeQueryWhereSelector<T> select (final Object o) {
         final Method m = MethodCallRecorder.popCurrentThreadRecordedCall ();
         return new Prime<T> (m);
     }
     
-    public static <T> Prime<T> select (final String listId1) {
+    public static <T> PrimeQueryWhereSelector<T> select (final String listId1) {
         return new Prime<T> (listId1);
     }
 
