@@ -28,6 +28,10 @@ public class Prime<T> implements PrimeQueryWhereSelector<T>, PrimeQueryCondition
     public static <T> PrimeQueryWhereSelector<T> select (final Class<T> clazz) {
         return new Prime<T> (clazz);
     }
+    
+    public static <T> Prime<T> select (final Method m) {
+        return new Prime<T> (m);
+    }
 
     public static <T> Prime<T> select (final Object o) {
         final Method m = MethodCallRecorder.popCurrentThreadRecordedCall ();
@@ -98,6 +102,12 @@ public class Prime<T> implements PrimeQueryWhereSelector<T>, PrimeQueryCondition
     public <U> PrimeQueryWhereSelector<U> andThenSelect (final String listId) {
         this.builtQueries.append (PrimeQueryFragmentsBuilder.build (this.target, this.where.toString (), this.limit, this.listId));
         return new Prime<U> (listId, this.builtQueries.toString ());
+    }
+    
+    public <U> Prime<U> andThenSelect (final Object o) {
+        final Method m = MethodCallRecorder.popCurrentThreadRecordedCall ();
+        this.builtQueries.append (PrimeQueryFragmentsBuilder.build (this.target, this.where.toString (), this.limit, this.listId));
+        return new Prime<U> (m, this.builtQueries.toString ());
     }
 
     @Override

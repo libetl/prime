@@ -155,7 +155,7 @@ class PrimeQueryExecutor {
     }
 
     private static String getSourceListIdIfApplicable (final QueryContext query) {
-        return query.returnedType ().resultListType () != null ? query.returnedType ().resultListType ().field ().getText () : null;
+        return query.returnedType ().resultSetType () != null ? query.returnedType ().resultSetType ().field ().getText () : null;
     }
 
     @SuppressWarnings ("unchecked")

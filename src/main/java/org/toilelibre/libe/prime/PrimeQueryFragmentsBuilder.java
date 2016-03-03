@@ -38,7 +38,7 @@ class PrimeQueryFragmentsBuilder {
     }
 
     public static String buildResultListId (final String listId) {
-        return "resultList ['" + listId + "']";
+        return "resultSet ['" + listId + "']";
     }
 
 }

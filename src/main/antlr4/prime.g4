@@ -9,7 +9,7 @@ command : query;
 
 query : SELECT returnedType wherecriterias? limit? saveAs?;
 
-returnedType : type | methodReturnType | resultListType;
+returnedType : type | methodReturnType | resultSetType;
 wherecriterias : WHERE (criterias | TRUE);
 saveAs : SAVEAS QUOTE? field QUOTE?;
 
@@ -24,7 +24,7 @@ args : namedArgs | refArgs;
 namedArgs : (value COMMA)* value;
 refArgs : SAVEDARGS HASH UUID;
 
-resultListType : (RESULTLIST LBRACKET QUOTE? field QUOTE? RBRACKET);
+resultSetType : (RESULTSET LBRACKET QUOTE? field QUOTE? RBRACKET);
 
 limit : LIMIT integer;
 value : (QUOTE? (WORD | number) QUOTE?) | (DQUOTE ANYTHING_BUT_DQUOTE? DQUOTE);
@@ -47,7 +47,7 @@ OR : 'or';
 AND : 'and';
 LIMIT : 'limit';
 ATTRIBUTE : 'attribute';
-RESULTLIST : 'resultList';
+RESULTSET : 'resultSet';
 SAVEAS : 'saveAs';
 SAVEDARGS : 'savedArgs';
 

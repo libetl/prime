@@ -175,7 +175,7 @@ public class PrimeTest {
         Database.store (a1);
         Database.store (a2);
         Database.store (a3);
-        final Set<A> resultSetOfA = Prime.<A> result ("select org.toilelibre.libe.prime.blackbox.PrimeTest$A where getC () == 5 saveAs resultSet1 ; select resultList['resultSet1'] where getB () == 2");
+        final Set<A> resultSetOfA = Prime.<A> result ("select org.toilelibre.libe.prime.blackbox.PrimeTest$A where getC () == 5 saveAs resultSet1 ; select resultSet['resultSet1'] where getB () == 2");
         Assertions.assertThat (resultSetOfA.toArray ()).isNotNull ().isNotEmpty ().containsOnly (a2);
     }
 
