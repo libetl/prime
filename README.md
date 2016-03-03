@@ -34,20 +34,20 @@ public class MyClass {
         D vD = $ (D.class); // virtual D
 
         // Get any A instance in the database where b = 2 and c = 1
-        select (A.class).where (eq (vA.getB (), 2)).and (eq (vA.getC (), 1)).list ();
+        select (A.class).where (eq (vA.getB (), 2)).and (eq (vA.getC (), 1)).result ();
 
         // Get any D instance inside the a2.getD  () result where e = 2.
         // No need to add 'a2' in a Database, the object is a database already.
-        select ($ (a2).getD ()).where (eq (vD.getE (), 2)).list ();
+        select ($ (a2).getD ()).where (eq (vD.getE (), 2)).result ();
 
         // This also works with plain text queries, but hides the usage in your IDE.
         // Can be useful for external queries.
-        list ("select mypackage.D where attribute [c] != 3");
+        result ("select mypackage.D where attribute [c] != 3");
 
         // The language allows to store a temporary list and to use it in another request
         // This example stores in 'list1' all the database A instances where c = 5,
         // and then query 'list1' to filter all the instances having b = 2.
-        list ("select mypackage.A where getC () == 5 saveAs list1 ; " + 
+        result ("select mypackage.A where getC () == 5 saveAs list1 ; " + 
               "select resultSet ['list1'] where getB () == 2");
         //The same query, written with a fluent interface
         select (A.class).where (eq (vA.getC (), 5)).saveAs ("list1").
