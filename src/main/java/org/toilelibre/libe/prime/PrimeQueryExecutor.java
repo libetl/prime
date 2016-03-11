@@ -29,10 +29,10 @@ class PrimeQueryExecutor {
             final primeParser.ConjunctionContext conjunction = i > 0 ? query.wherecriterias ().criterias ().conjunction (i - 1) : null;
             final Object [] args = PrimeQueryExecutor.popArgs (criteria.expression ().args ());
             final Class<?> [] paramTypes = PrimeQueryExecutor.popParamTypes (criteria.expression ().args ());
-            conditions
-                    .add (new PrimeWhere (conjunction == null ? null : conjunction.getText (), (criteria.LPAREN () == null ? Collections.emptyList () : criteria.LPAREN ()).size (),
-                            criteria.expression ().getText (), paramTypes, args, criteria.operator ().getText (), criteria.value ().getText ().replaceAll ("^'", "").replaceAll ("'$", ""),
-                            (criteria.RPAREN () == null ? Collections.emptyList () : criteria.RPAREN ()).size ()));
+            conditions.add (new PrimeWhere (conjunction == null ? null : conjunction.getText (),
+                    (criteria.LPAREN () == null ? Collections.emptyList () : criteria.LPAREN ()).size (), criteria.expression ().getText (), paramTypes, args,
+                    criteria.operator ().getText (), criteria.value ().getText ().replaceAll ("^'", "").replaceAll ("'$", ""),
+                    (criteria.RPAREN () == null ? Collections.emptyList () : criteria.RPAREN ()).size ()));
 
         }
         return conditions;
@@ -73,7 +73,7 @@ class PrimeQueryExecutor {
         final Method method = PrimeQueryExecutor.getMethodIfApplicable (typeAsString);
         final String listId = PrimeQueryExecutor.getSourceListIdIfApplicable (query);
         Class<T> returnType = null;
-        if (method != null && listId == null) {
+        if ( (method != null) && (listId == null)) {
             returnType = PrimeQueryExecutor.getParameterizedReturnType (method);
         } else if (listId == null) {
             returnType = PrimeQueryExecutor.getCorrectReturnType (typeAsString);
@@ -120,7 +120,7 @@ class PrimeQueryExecutor {
         try {
             return Class.forName (typeAsString.indexOf ('.') == -1 ? typeAsString : typeAsString.substring (0, typeAsString.lastIndexOf ('.')))
                     .getMethod (typeAsString.substring (typeAsString.lastIndexOf ('.') + 1));
-        } catch (ClassNotFoundException e) {
+        } catch (final ClassNotFoundException e) {
             return null;
         } catch (NoSuchMethodException | SecurityException e1) {
             throw new PrimeException ("Could not find the specified method inside the type : " + typeAsString, e1);
@@ -186,7 +186,7 @@ class PrimeQueryExecutor {
 
     private static Object [] popArgs (final ArgsContext args) {
         if ( (args != null) && (args.refArgs () != null)) {
-            Object [] result = ArgsStorage.popArgs (UUID.fromString (args.refArgs ().UUID ().getText ()));
+            final Object [] result = ArgsStorage.popArgs (UUID.fromString (args.refArgs ().UUID ().getText ()));
             if (result == null) {
                 throw new PrimeException ("Invalid use of savedArgs : please check that the select builder is called instead of a plain text query");
             }
@@ -194,9 +194,10 @@ class PrimeQueryExecutor {
         }
         return null;
     }
+
     private static Class<?> [] popParamTypes (final ArgsContext args) {
         if ( (args != null) && (args.refArgs () != null)) {
-            Class<?> [] result = ArgsStorage.popParamTypes (UUID.fromString (args.refArgs ().UUID ().getText ()));
+            final Class<?> [] result = ArgsStorage.popParamTypes (UUID.fromString (args.refArgs ().UUID ().getText ()));
             if (result == null) {
                 throw new PrimeException ("Invalid use of savedArgs : please check that the select builder is called instead of a plain text query");
             }

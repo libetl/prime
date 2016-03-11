@@ -14,10 +14,7 @@ import org.toilelibre.libe.prime.Prime;
 public class PrimeTest {
 
     static class A {
-        /**
-		 * 
-		 */
-		private final int     b;
+        private final int     b;
         private final int     c;
         private final List<D> d;
 
@@ -80,10 +77,7 @@ public class PrimeTest {
     }
 
     static class D {
-        /**
-		 * 
-		 */
-		private final int e;
+        private final int e;
 
         public D (final int e) {
             this.e = e;
@@ -172,7 +166,8 @@ public class PrimeTest {
         Database.store (a1);
         Database.store (a2);
         Database.store (a3);
-        final Set<A> resultSetOfA = Prime.<A> result ("select org.toilelibre.libe.prime.blackbox.PrimeTest$A where getC () == 5 saveAs resultSet1 ; select resultSet['resultSet1'] where getB () == 2");
+        final Set<A> resultSetOfA = Prime
+                .<A> result ("select org.toilelibre.libe.prime.blackbox.PrimeTest$A where getC () == 5 saveAs resultSet1 ; select resultSet['resultSet1'] where getB () == 2");
         Assertions.assertThat (resultSetOfA.toArray ()).isNotNull ().isNotEmpty ().containsOnly (a2);
     }
 
@@ -210,7 +205,8 @@ public class PrimeTest {
         Database.store (a1);
         Database.store (a2);
         Database.store (a3);
-        final Set<A> resultSetOfA1 = Prime.select (A.class).where (Matcher.eq (Prime.$ (A.class).getC (), 5)).and (Matcher.eq (Prime.$ (A.class).getB (), 2).orEq (Prime.$ (A.class).getB (), 3)).result ();
+        final Set<A> resultSetOfA1 = Prime.select (A.class).where (Matcher.eq (Prime.$ (A.class).getC (), 5))
+                .and (Matcher.eq (Prime.$ (A.class).getB (), 2).orEq (Prime.$ (A.class).getB (), 3)).result ();
         Assertions.assertThat (resultSetOfA1.toArray ()).isNotNull ().isNotEmpty ().containsOnly (a2, a3);
     }
 }

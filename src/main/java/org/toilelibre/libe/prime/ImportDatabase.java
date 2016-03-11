@@ -11,24 +11,22 @@ import com.thoughtworks.xstream.io.binary.BinaryStreamReader;
 
 class ImportDatabase {
 
-	@SuppressWarnings ("unchecked")
+    @SuppressWarnings ("unchecked")
     public static void importNow () {
 
         try {
-            File file = Database.getDatabaseFile ();
+            final File file = Database.getDatabaseFile ();
             if (!file.exists ()) {
                 file.createNewFile ();
                 return;
             }
-            XStream xStream = new XStream ();
-            FileInputStream fis = new FileInputStream (file);
-            Database.setDatabase (
-                    (Map<Class<?>, Set<Object>>) 
-                    xStream.unmarshal (new BinaryStreamReader (fis)));
-            
-        } catch (IOException e) {
+            final XStream xStream = new XStream ();
+            final FileInputStream fis = new FileInputStream (file);
+            Database.setDatabase ((Map<Class<?>, Set<Object>>) xStream.unmarshal (new BinaryStreamReader (fis)));
+
+        } catch (final IOException e) {
             e.printStackTrace ();
         }
-	}
+    }
 
 }

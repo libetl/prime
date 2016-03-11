@@ -137,10 +137,12 @@ class PrimeWhereSubExprFinder {
         PrimeWhereSubExprFinder.addToResult (conditions, level + 1, result, innerStart, innerEnd);
         subConditions.set (innerStart,
                 new PrimeWhere (startCondition.getConjunction (), (startCondition.getOpenedParentheses () <= 0 ? 0 : startCondition.getOpenedParentheses () - 1),
-                        startCondition.getExpression (), startCondition.getParamTypes(), startCondition.getArgs (), startCondition.getOperator (), startCondition.getValue (),
+                        startCondition.getExpression (), startCondition.getParamTypes (), startCondition.getArgs (), startCondition.getOperator (), startCondition.getValue (),
                         startCondition.getClosedParentheses ()));
-        subConditions.set (innerEnd, new PrimeWhere (endCondition.getConjunction (), endCondition.getOpenedParentheses (), endCondition.getExpression (), startCondition.getParamTypes(), endCondition.getArgs (),
-                endCondition.getOperator (), endCondition.getValue (), (endCondition.getClosedParentheses () <= 0 ? 0 : endCondition.getClosedParentheses () - 1)));
+        subConditions.set (innerEnd,
+                new PrimeWhere (endCondition.getConjunction (), endCondition.getOpenedParentheses (), endCondition.getExpression (), startCondition.getParamTypes (),
+                        endCondition.getArgs (), endCondition.getOperator (), endCondition.getValue (),
+                        (endCondition.getClosedParentheses () <= 0 ? 0 : endCondition.getClosedParentheses () - 1)));
         PrimeWhereSubExprFinder.concatenateResultWith (result, PrimeWhereSubExprFinder.findSubconds (subConditions,
                 startCondition.getOpenedParentheses () <= 0 ? innerStart + 1 : innerStart, endCondition.getClosedParentheses () <= 0 ? innerEnd - 1 : innerEnd, level + 1));
     }

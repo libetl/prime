@@ -52,8 +52,8 @@ class PrimeWhereResolver {
      */
     public static List<List<PrimeWhereSubExprFinder.SubExpression>> resolve (final List<List<PrimeWhereSubExprFinder.SubExpression>> subconds, final Object candidate) {
         if (candidate == null) {
-            return Collections.singletonList (Collections.singletonList (
-                    new PrimeWhereSubExprFinder.SubExpression (0, 0, Collections.<PrimeWhere> singletonList (PrimeWhere.FALSE_AND))));
+            return Collections
+                    .singletonList (Collections.singletonList (new PrimeWhereSubExprFinder.SubExpression (0, 0, Collections.<PrimeWhere> singletonList (PrimeWhere.FALSE_AND))));
         }
 
         for (int level = subconds.size () - 1 ; level >= 0 ; level--) {
@@ -74,7 +74,7 @@ class PrimeWhereResolver {
         }
         for (int i = 0 ; i < subexpression.getExpressions ().size () ; i++) {
             if (!"?".equals (subexpression.getExpressions ().get (i).getExpression ())) {
-                boolean and = "and".equals (subexpression.getExpressions ().get (i).getConjunction ());
+                final boolean and = "and".equals (subexpression.getExpressions ().get (i).getConjunction ());
                 subexpression.getExpressions ().set (i, truth ? and ? PrimeWhere.TRUE_AND : PrimeWhere.TRUE_OR : and ? PrimeWhere.FALSE_AND : PrimeWhere.FALSE_OR);
             }
         }

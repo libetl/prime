@@ -1,10 +1,10 @@
 package org.toilelibre.libe.prime;
 
-import groovy.util.Eval;
-
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+
+import groovy.util.Eval;
 
 class PrimeWhereMatcher {
 
@@ -12,13 +12,13 @@ class PrimeWhereMatcher {
         EQUALS ("==", new Tester () {
             @Override
             public boolean test (final PrimeWhere condition, final Object candidateDbo) {
-                return  (boolean) Eval.x(this.getCandidateValue (condition, candidateDbo), "x.equals (" + condition.getValue () + ")");
+                return (boolean) Eval.x (this.getCandidateValue (condition, candidateDbo), "x.equals (" + condition.getValue () + ")");
             }
         }), DIFFERENT ("!=", new Tester () {
 
             @Override
             public boolean test (final PrimeWhere condition, final Object candidateDbo) {
-                return  (boolean) Eval.x(this.getCandidateValue (condition, candidateDbo), "!x.equals (" + condition.getValue () + ")");
+                return (boolean) Eval.x (this.getCandidateValue (condition, candidateDbo), "!x.equals (" + condition.getValue () + ")");
             }
         }), LIKE ("~=", new Tester () {
 
@@ -89,11 +89,11 @@ class PrimeWhereMatcher {
         private Object returnMethodResult (final PrimeWhere condition, final Object candidateDbo) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
             final Method m = this.getMethod (condition, candidateDbo);
 
-            if (m != null && condition.getArgs () != null) {
+            if ( (m != null) && (condition.getArgs () != null)) {
                 m.setAccessible (true);
                 return m.invoke (candidateDbo, condition.getArgs ());
             }
-            //the more we avoid to go inside the groovy layer, the faster it is
+            // the more we avoid to go inside the groovy layer, the faster it is
             return Eval.x (candidateDbo, "x." + condition.getExpression ());
         }
 
