@@ -1,7 +1,6 @@
 package org.toilelibre.libe.prime;
 
 import java.io.File;
-import java.io.Serializable;
 import java.net.URL;
 import java.util.Collections;
 import java.util.HashMap;
@@ -16,15 +15,15 @@ public class Database {
 		ImportDatabase.importNow ();
 	}
 	
-    private static Map<Class<?>, Set<Serializable>> database = new HashMap<> ();
+    private static Map<Class<?>, Set<Object>> database = new HashMap<> ();
 
-    private static Map<String, Set<Serializable>> resultSets = new HashMap<> ();
+    private static Map<String, Set<Object>> resultSets = new HashMap<> ();
 
-    static Map<Class<?>, Set<Serializable>> getDatabase () {
+    static Map<Class<?>, Set<Object>> getDatabase () {
     	return new HashMap<> (Database.database);
     }
     
-    static void setDatabase ( Map<Class<?>, Set<Serializable>> database) {
+    static void setDatabase ( Map<Class<?>, Set<Object>> database) {
     	Database.database = new HashMap<> (database);
     }
     
@@ -58,21 +57,21 @@ public class Database {
         return (Set<T>) Collections.unmodifiableSet (Database.database.get (clazz));
     }
 
-    public static boolean remove (final Serializable o) {
+    public static boolean remove (final Object o) {
         if (Database.database.get (o.getClass ()) == null) {
-            Database.database.put (o.getClass (), new HashSet<Serializable> ());
+            Database.database.put (o.getClass (), new HashSet<Object> ());
         }
         return Database.database.get (o.getClass ()).remove (o);
     }
 
     @SuppressWarnings ("unchecked")
     static <T> void saveResultSet (final String SetId, final Class<T> classOfSet, final Set<T> resultSet) {
-        Database.resultSets.put (SetId, (Set<Serializable>) resultSet);
+        Database.resultSets.put (SetId, (Set<Object>) resultSet);
     }
 
-    public static void store (final Serializable o) {
+    public static void store (final Object o) {
         if (Database.database.get (o.getClass ()) == null) {
-            Database.database.put (o.getClass (), new HashSet<Serializable> ());
+            Database.database.put (o.getClass (), new HashSet<Object> ());
         }
         Database.database.get (o.getClass ()).add (o);
     }

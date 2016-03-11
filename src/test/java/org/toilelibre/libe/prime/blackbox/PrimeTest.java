@@ -1,6 +1,5 @@
 package org.toilelibre.libe.prime.blackbox;
 
-import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
@@ -14,11 +13,10 @@ import org.toilelibre.libe.prime.Prime;
 
 public class PrimeTest {
 
-    static class A implements Serializable {
+    static class A {
         /**
 		 * 
 		 */
-		private static final long serialVersionUID = -1651950806415683682L;
 		private final int     b;
         private final int     c;
         private final List<D> d;
@@ -81,11 +79,10 @@ public class PrimeTest {
 
     }
 
-    static class D implements Serializable {
+    static class D {
         /**
 		 * 
 		 */
-		private static final long serialVersionUID = -4701321548778747085L;
 		private final int e;
 
         public D (final int e) {
